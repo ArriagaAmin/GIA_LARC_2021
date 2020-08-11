@@ -11,7 +11,7 @@ tokensList = [[] for i in range(500)]
 
 # Diccionario de palabras reservadas - Tokens
 reserved = {
-  "initial": "TkInitial",
+  "heading": "TkHeading",
   "green": "TkGreen",
   "yellow": "TkYellow",
   "blue": "TkBlue",
@@ -33,17 +33,23 @@ reserved = {
   "identify": "TkIdentify",
   "take": "TkTake",
   "level": "TkLevel",
-  "drop": "TkDrop"
+  "drop": "TkDrop",
+  "True": "TkTrue",
+  "False": "TkFalse",
+  "bool": "TkBoolean",
+  "int": "TkInteger",
 }
 
 # Lista de tokens
 tokens = [
   # Oraciones reservadas
-  "TkBScenario",
-  "TkEScenario",
+  "TkWithInitialValue",
+  "TkStartAt",
+  "TkBeginScenario",
+  "TkEndScenario",
   "TkPlaceBlock",
-  "TkBTask",
-  "TkETask",
+  "TkBeginTask",
+  "TkEendTask",
   "TkTurnL",
   "TkTrunR",
   "TkDetectL",
@@ -54,6 +60,16 @@ tokens = [
   "TkSemiColon",
   "TkOpenParent",
   "TkCloseParent",
+  "TkEqual",
+  "TkPlus",
+  "TkMinus",
+  "TkMult",
+  "TkEquiv",
+  "TkLessT",
+  "TkLessEq",
+  "TkGreatT",
+  "TkGratEq",
+  "TkNotEqual",
   "TkSpace",
   "TkTab",
   "TkNewLine",
@@ -69,20 +85,26 @@ tokens = [
 ] + list(reserved.values())
 
 # Definicion de las Tokens oraciones reservadas
-def t_TkBScenario(t):
+def t_TkWithInitialValue(t):
+  r'with initial value'
+  return t
+def t_TkStartAt(t):
+  r'Start at'
+  return t
+def t_TkBeginScenario(t):
   r'begin-scenario'
   return t
-def t_TkEScenario(t):
+def t_TkEndScenario(t):
   r'end-scenario'
   return t
 def t_TkPlaceBlock(t):
   r'Place(\s)+block'
   t.lexer.lineno += t.value.count("\n")
   return t
-def t_TkBTask(t):
+def t_TkBeginTask(t):
   r'begin-task'
   return t
-def t_TkETask(t):
+def t_TkEndTask(t):
   r'end-task'
   return t
 def t_TkTurnL(t):
@@ -105,6 +127,16 @@ def t_TkDetectF(t):
 t_TkSemiColon = r'\;'
 t_TkOpenParent = r'\('
 t_TkCloseParent = r'\)'
+t_TkEqual = r'\='
+t_TkPlus = r'\+'
+t_TkMinus = r'\-'
+t_TkMult = r'\*'
+t_TkEquiv = r'\=\='
+t_TkLessT = r'\<'
+t_TkLessEq = r'\<\='
+t_TkGreatT = r'\>'
+t_TkGreatEq = r'\>\='
+t_TkNotEqual = r'\!\='
 t_ignore_TkSpace = r'\ '
 def t_TkTab(t):
   r'\t'
