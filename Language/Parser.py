@@ -93,7 +93,7 @@ class Variable:
 
     # Almacenamos el id en otro parametro.
     self.name = id
-
+    self.scopeId = -1
     # Tipo de elemento y datos de la variable.
     self.elementType = elementType
     self.data = data
@@ -117,16 +117,21 @@ class Willy:
 
     # Orientacion.
     self.look = "north"
-
     # Bloque que contiene.
     self.block = None
+    # Bloque identificado.
+    self.blockId = None
+    self.level = 0
 
 class Scenario:
   """ Clase que guarda la informacion de un scenario en el lenguaje Willy*. """
   def __init__(self):
     self.id = "begin-scenario"
+    self.scopeId = -1
     # Mapa
     self.scenarioMap = [[[] for _ in range(22)] for _ in range(22)]
+    self.shelves = [[[] for _ in range(5)] for _ in range(3)]
+    self.unRegions = [[] for _ in range(5)]
     # Conjunto de symbolos definidos en el scenario.
     self.context = [] 
     # Informacion de Willy del scenario.
@@ -137,6 +142,7 @@ class Task:
   def __init__(self, scenario):
     self.id = "begin-task"
     self.elementType = "Task"
+    self.scopeId = -1
 
     # Inicialmente se guarda el ID de la tarea en un atributo nombre
     # para que el ID de todas las tareas sea "begin-task" durante se definicion,
@@ -189,7 +195,7 @@ def p_beginS(p):
   # Permite crear un nuevo contexto para el scenario actual una vez inicializado. 
   '''beginS : TkBeginScenario'''
   ST.push_empty_table()
-  ST.insert( Scenario() )
+  ST.insert(Scenario())
 
 def p_endS(p):
   # Permite actualizar la informacion del escenario dada su definicion, y 
@@ -449,6 +455,11 @@ def p_boolFactor(p):
 
 def p_boolElement(p):
   '''boolElement  : boolId
+                  | boolC
+                  | detectLeft
+                  | detectRight
+                  | detectFront
+                  | idBlockIs
                   | boolIntExpression
                   | TkOpenParent boolExpression TkCloseParent'''
   if (len(p) == 2) and p[1] != None:
@@ -456,6 +467,114 @@ def p_boolElement(p):
   elif (len(p) == 4):
     if p[2] != None:
       p[0] = p[2]
+
+def p_boolConstant(p):
+  '''boolC  : TkTrue
+            | TkFalse'''
+  if p[1] == "True": 
+    def const(): return True
+  else: 
+    def const(): return False
+  p[0] = const
+
+def p_detectLeft(p):
+  '''detectLeft : TkDetectL'''
+  scenario = ST.find("begin-task").scenario
+  def detect(scenario = scenario):
+    if not ST.terminate:
+      willy = scenario.willy
+      scenarioMap = scenario.scenarioMap
+      x, y, orientation = willy.x, willy.y, willy.look
+
+      if orientation == "north":
+        if x == 0: return False
+        elif scenarioMap[y][x-1] == []: return False
+        else: return True
+
+      elif orientation == "south":
+        if x == len(scenarioMap[0])-1: return False
+        elif scenarioMap[y][x+1] == []: return False
+        else: return True
+
+      elif orientation == "west":
+        if y == len(scenarioMap): return False
+        elif scenarioMap[y+1][x] == []: return False
+        else: return True
+
+      elif orientation == "east":
+        if y == 0: return False
+        elif scenarioMap[y-1][x] == []: return False
+        else: return True
+  p[0] = detect
+
+def p_detectRight(p):
+  '''detectRight : TkDetectR'''
+  scenario = ST.find("begin-task").scenario
+  def detect(scenario = scenario):
+    if not ST.terminate:
+      willy = scenario.willy
+      scenarioMap = scenario.scenarioMap
+      x, y, orientation = willy.x, willy.y, willy.look
+
+      if orientation == "south":
+        if x == 0: return False
+        elif scenarioMap[y][x-1] == []: return False
+        else: return True
+
+      elif orientation == "north":
+        if x == len(scenarioMap[0])-1: return False
+        elif scenarioMap[y][x+1] == []: return False
+        else: return True
+
+      elif orientation == "east":
+        if y == len(scenarioMap): return False
+        elif scenarioMap[y+1][x] == []: return False
+        else: return True
+
+      elif orientation == "west":
+        if y == 0: return False
+        elif scenarioMap[y-1][x] == []: return False
+        else: return True
+  p[0] = detect
+
+def p_detectFront(p):
+  '''detectFront : TkDetectF'''
+  scenario = ST.find("begin-task").scenario
+  def detect(scenario = scenario):
+    if not ST.terminate:
+      willy = scenario.willy
+      scenarioMap = scenario.scenarioMap
+      x, y, orientation = willy.x, willy.y, willy.look
+
+      if orientation == "west":
+        if x == 0: return False
+        elif scenarioMap[y][x-1] == []: return False
+        else: return True
+
+      elif orientation == "east":
+        if x == len(scenarioMap[0])-1: return False
+        elif scenarioMap[y][x+1] == []: return False
+        else: return True
+
+      elif orientation == "south":
+        if y == len(scenarioMap)-1: return False
+        elif scenarioMap[y+1][x] == []: return False
+        else: return True
+
+      elif orientation == "north":
+        if y == 0: return False
+        elif scenarioMap[y-1][x] == []: return False
+        else: return True
+  p[0] = detect
+
+def p_idBlockIs(p):
+  '''idBlockIs  : TkLastIdBlockIs TkNum
+                | TkLastIdBlockIs TkBNum
+                | TkLastIdBlockIs color'''
+  willy = ST.find("begin-task").scenario.willy
+  def identify(willy = willy, id = p[2]):
+    return willy.blockId == id
+  p[0] = identify
 
 def p_boolId(p):
   # Verifica que un ID sea booleano.
@@ -489,12 +608,12 @@ def p_boolId(p):
       p[0] = boolean
 
 def p_boolIntExpression(p):
-  '''boolExpression : intExpression TkEquiv intExpression
-                    | intExpression TkNotEqual intExpression
-                    | intExpression TkLessT intExpression
-                    | intExpression TkLessEq intExpression
-                    | intExpression TkGreatT intExpression
-                    | intExpression TkGreatEq intExpression'''
+  '''boolIntExpression  : intExpression TkEquiv intExpression
+                        | intExpression TkNotEqual intExpression
+                        | intExpression TkLessT intExpression
+                        | intExpression TkLessEq intExpression
+                        | intExpression TkGreatT intExpression
+                        | intExpression TkGreatEq intExpression'''
 
   if (len(p) == 2) and (p[1] != None):
     p[0] = p[1]
@@ -540,7 +659,6 @@ def p_boolIntExpression(p):
       def equivTerm(expression = expression, term = term):
         return expression() >= term()
       p[0] = equivTerm
-
 
 
 ########################### INTEGER EXPRESSIONS ###########################
@@ -647,6 +765,8 @@ def p_beginT(p):
     ST.push_empty_table()
     # Creamos un nuevo task.
     newTask = Task(scenario)
+    newTask.scopeId = ST.scopeId
+    ST.scopeId += 1
     # Insertamos el task en la tabla de simbolos.
     ST.insert(newTask)
     # Agregamos cada simbolo del contexto a la tabla de simbolos.
@@ -708,26 +828,217 @@ def p_taskInstruction(p):
 def p_instruction(p):
   # Conjunto de instrucciones. Las reglas del tipo 'willyInstructionN'
   # indican las istrucciones basicas con N tokens.
-  '''instruction  : if
+  '''instruction  : assignBool
+                  | assignInt
+                  | if
                   | repeat
                   | while
-                  | defineInstruction
                   | beginInstruction
+                  | defineInstruction
                   | willyInstruction'''
   p[0] = p[1]
+
+# ASSIGNMENTS
+def p_assignBool(p):
+  '''assignBool : TkId TkEqual boolExpression'''
+  if ST.find("begin-task"):
+    error = False
+
+    # Si el ID indicado no existe, error.
+    if not ST.findNotGlobal(p[1]):
+      pos = getPosition(p.lexpos(1), tokensList)
+      contextErrors.append(
+        "Linea %d, columna %d:\tID '%s' no definido." % \
+        (pos[0], pos[1], p[1])
+      )
+      error = True
+
+    # Si el ID indicado no es booleano, error.
+    elif ST.find(p[1]).elementType != "Boolean":
+      pos = getPosition(p.lexpos(1), tokensList)
+      contextErrors.append(
+        "Linea %d, columna %d:\tSe debe operar con una variable del tipo Boolean." % \
+        (pos[0], pos[1])
+      )
+      error = True
+
+    if not error:
+      var = ST.find(p[1])
+      def assingBoolean(var = var, expression = p[3]):
+        var.value = expression()
+      p[0] = assingBoolean
+
+def p_assignInt(p):
+  '''assignInt : TkId TkEqual intExpression'''
+  if ST.find("begin-task"):
+    error = False
+
+    # Si el ID indicado no existe, error.
+    if not ST.findNotGlobal(p[1]):
+      pos = getPosition(p.lexpos(1), tokensList)
+      contextErrors.append(
+        "Linea %d, columna %d:\tID '%s' no definido." % \
+        (pos[0], pos[1], p[1])
+      )
+      error = True
+
+    # Si el ID indicado no es entero, error.
+    elif ST.find(p[1]).elementType != "Integer":
+      pos = getPosition(p.lexpos(1), tokensList)
+      contextErrors.append(
+        "Linea %d, columna %d:\tSe debe operar con una variable del tipo Integer." % \
+        (pos[0], pos[1])
+      )
+      error = True
+
+    if not error:
+      var = ST.find(p[1])
+      def assingInt(var = var, expression = p[3]):
+        var.value = expression()
+      p[0] = assingInt
+
+# BLOCKS
+def p_if(p):
+  # Define el condicional if.
+  '''if   : TkIf boolExpression TkThen instruction
+          | TkIf boolExpression TkThen instruction TkElse instruction'''
+  if ST.find("begin-task"):
+    expression = p[2]
+    inst = p[4]
+
+    if len(p) == 5:
+      def cond(expression = expression, inst = inst):
+        if expression() and not ST.terminate: inst()
+    else:
+      inst2 = p[6]
+      def cond(expression = expression, inst = inst, inst2 = inst2):
+        if expression() and not ST.terminate: inst()
+        elif not ST.terminate: inst2()
+    p[0] = cond
+    
+def p_repeat(p):
+  # Define el ciclo repeat.
+  '''repeat : TkRepeat TkNum TkTimes instruction'''
+  
+  if ST.find("begin-task"):
+    # Obtenemos la identacion correcta.
+    num = int(p[2])
+    func = p[4]
+    def repeat(num = num, func = func):
+      if not ST.terminate:
+        for i in range(num): func()
+    p[0] = repeat
+
+def p_while(p):
+  # Define el ciclo repeat.
+  '''while : TkWhile boolExpression TkDo instruction'''
+  
+  if ST.find("begin-task"):
+    expression = p[2]
+    instruction = p[4]
+    def loop(expression = expression, instruction = instruction):
+      while expression() and not ST.terminate: instruction()
+    p[0] = loop
+
+def p_beginInstruction(p):
+  # Permite colocar bloques de instrucciones.
+  '''beginInstruction : TkBegin taskInstruction TkEnd TkSemiColon
+                      | TkBegin taskInstruction TkEnd
+                      | TkBegin TkEnd'''
+
+  if ST.find("begin-task"):
+    if len(p) == 3: p[0] = skip
+    else: p[0] = p[2]
+
+# DEFINE
+def p_defineInstruction(p):
+  # Permiter definir instrucciones dado un ID.
+  '''defineInstruction : startDefine instDefine'''
+  p[0] = skip
+
+def p_startDefine(p):
+  # Permite entrar en un nuevo contexto al definir una instruccion.
+  '''startDefine : TkDefine TkId'''
+
+  if ST.find("begin-task"):
+    error = False
+
+    if ST.findNotGlobal(p[2], ST.head):
+      pos = getPosition(p.lexpos(2), tokensList)
+      contextErrors.append(
+        "Linea %d, columna %d:\tID '%s' ya definido." % \
+        (pos[0], pos[1], p[2])
+      )
+      error = True
+
+    # Si el head de la tabla de simbolos es mayor que 1, significa que
+    # estamos dentro de un define, por lo que va a haber una variable
+    # falsa foo, asi que momentaneamente hacemos que el ID de esa variable
+    # sea vacia.
+    elif ST.head > 1:
+      fooId = ST.tables[ST.head][0].id
+      ST.tables[ST.head][0].id = ""
+      if ST.findNotGlobal(p[2], ST.head):
+        pos = getPosition(p.lexpos(2), tokensList)
+        contextErrors.append(
+          "Linea %d, columna %d:\tID '%s' ya definido." % \
+          (pos[0], pos[1], p[2])
+        )
+        error = True
+      ST.tables[ST.head][0].id = fooId
+
+
+    if not error:
+      # Creamos una nueva variable del tipo Instruction y actualizamos sus datos.
+      newInstruction = Variable("define", "define", "", "Instructions")
+      newInstruction.scopeId = ST.scopeId
+      newInstruction.name = p[2]
+      newInstruction.declarationBlock = ST.declarationBlock
+
+      # Actualizamos el scopeId/declarationBlock.
+      ST.declarationBlock = ST.scopeId
+      ST.scopeId += 1
+
+      # Insertamos la instruction a la tabla de simbolos.
+      ST.insert(newInstruction)
+      task = ST.find("begin-task")
+      task.context.append(newInstruction)
+      ST.push_empty_table()
+
+      # Insertamos una variable falsa para que esta instruccion pueda ser llamada
+      # desde dentro de su definicion
+      foo = Variable(p[2], "define", skip, "Instructions")
+      foo.id = foo.name
+      foo.scopeId = ST.scopeId-1
+      ST.insert(foo)
+
+def p_instDefine(p):
+  # Permite definir una instruccion y luego regresar al contexto anterior.
+  '''instDefine : TkAs instruction'''
+
+  if ST.find("begin-task") and ST.findNotGlobal("define", level=ST.head-1):
+    # Obtenemos las instrucciones definidas dentro del define.
+    instructions = ST.pop()
+    # Removemos la variable falsa
+    instructions.pop(0)
+
+    # Actualizamos la informacion de la instruccion definida.
+    newInstruction = ST.findNotGlobal("define", level=ST.head)
+    newInstruction.data = p[2]
+    newInstruction.id = newInstruction.name
+
+    # Actualizamos el declarationBlock.
+    ST.declarationBlock = newInstruction.declarationBlock
 
 # BASIC INSTRUCTIONS
 def p_willyInstruction(p):
   # Instrucciones basicas.
   '''willyInstruction : TkMove TkSemiColon
-                      | TkTurnLeft TkSemiColon
-                      | TkTurnRight TkSemiColon
-                      | TkDetectLeft TkSemiColon
-                      | TkDetectRight TkSemiColon
-                      | TkDetectFront TkSemiColon
-                      | TkIdentify TkSemiColon
+                      | TkTurnL TkSemiColon
+                      | TkTurnR TkSemiColon
                       | TkTake TkSemiColon
                       | TkDrop TkSemiColon
+                      | TkLevel TkNum TkSemiColon
                       | TkTerminate TkSemiColon
                       | willyInstructionId TkSemiColon'''
   
@@ -741,6 +1052,7 @@ def p_willyInstruction(p):
           willy = scenario.willy
           scenarioMap = scenario.scenarioMap
           x, y, orientation = willy.x, willy.y, willy.look
+          block = False
 
           if orientation == "north" and y > 0:
             if len(scenarioMap[y-1][x]) > 0: block = True
@@ -752,10 +1064,24 @@ def p_willyInstruction(p):
 
           elif orientation == "east" and x < len(scenarioMap[0])-1:
             if len(scenarioMap[y][x+1]) > 0: block = True
+            elif y == 0 and 3 <= x <= 18:
+              contextErrors.append(
+                ("Linea %d, columna %d:\tNo se puede mover a Willy de " +\
+                  "orma horizontal en la zona frente a los estantes.") % \
+                (errX, errY)
+              )
+              ST.terminate = True
             else: willy.x += 1
 
           elif orientation == "west" and x > 0:
             if len(scenarioMap[y][x-1]) > 0: block = True
+            elif y == 0 and 3 <= x <= 18:
+              contextErrors.append(
+                ("Linea %d, columna %d:\tNo se puede mover a Willy de " +\
+                  "orma horizontal en la zona frente a los estantes.") % \
+                (errX, errY)
+              )
+              ST.terminate = True
             else: willy.x -= 1
 
           else:
@@ -801,678 +1127,241 @@ def p_willyInstruction(p):
           world.printData()
       p[0] = turn
 
-    elif p[1] == "detect-left":
-      def move(scenario = scenario, errX = pos[0], errY = pos[1]):
+    elif p[1] == "take":
+      def take(scenario = scenario, errX = pos[0], errY = pos[1]):
+        if not ST.terminate:
+          willy = scenario.willy
+          scenarioMap = scenario.scenarioMap
+          x, y, orientation = willy.x, willy.y, willy.look
+          block = True
+
+          if willy.level != 0:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tWilly debe tener la grua en el nivel " +\
+                "0 para poder tomar un bloque.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
+
+          elif orientation == "north" and y > 0:
+            if len(scenarioMap[y-1][x]) == 0: block = False
+            else: willy.block = scenarioMap[y-1][x].pop()
+
+          elif orientation == "south" and y < len(scenarioMap)-1:
+            if len(scenarioMap[y+1][x]) == 0: block = False
+            else: willy.block = scenarioMap[y+1][x].pop()
+
+          elif orientation == "east" and x < len(scenarioMap[0])-1:
+            if len(scenarioMap[y][x+1]) == 0: block = False
+            else: willy.block = scenarioMap[y][x+1].pop()
+
+          elif orientation == "west" and x > 0:
+            if len(scenarioMap[y][x-1]) == 0: block = False
+            else: willy.block = scenarioMap[y][x-1].pop()
+
+          else:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tNo hay ningun bloque frente a Willy.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
+          
+          if block:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tNo hay ningun bloque frente a Willy.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
+      p[0] = take
+
+    elif p[1] == "drop":
+      def drop(scenario = scenario, errX = pos[0], errY = pos[1]):
         if not ST.terminate:
           willy = scenario.willy
           scenarioMap = scenario.scenarioMap
           x, y, orientation = willy.x, willy.y, willy.look
 
-          if orientation == "north":
-            if x == 0: p[0] = False
-            elif scenarioMap[y][x-1] == []: p[0] = False
-            else: p[0] = True
+          if willy.block == None:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tWilly debe tener un bloque.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
 
-          elif orientation == "south":
-            if len(scenarioMap[y+1][x]) > 0: block = True
-            else: willy.y += 1
+          elif not (y == 0 and 3 <= x <= 18 and orientation == "north") and \
+            not (y == 21 and orientation == "south"):
+            contextErrors.append(
+              ("Linea %d, columna %d:\tWilly debe estar en frente del estante o " +\
+                "de la zona de descarga para poder soltar un bloque.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
 
-          elif orientation == "east":
-            if len(scenarioMap[y][x+1]) > 0: block = True
-            else: willy.x += 1
+          elif y == 21 and orientation == "south":
+            if willy.level != 0:
+              contextErrors.append(
+                ("Linea %d, columna %d:\tWilly debe tener la grua en el nivel " +\
+                  "0 para poder soltar un bloque en la zona de descarga.") % \
+                (errX, errY)
+              )
+              ST.terminate = True
+            else:
+              scenario.unRegions[int(x/3)].append(willy.block)
+              willy.block = None
 
-          elif orientation == "west":
-            if len(scenarioMap[y][x-1]) > 0: block = True
-            else: willy.x -= 1
-      p[0] = detect
+          else:
+            scenario.shelves[willy.level][int(x/3)-1].append(willy.block)
+            willy.block = None
+      p[0] = drop
 
     elif p[1] == "terminate":
         p[0] = terminate
     
-    else:
-        p[0] = p[1]
+    elif p[1] == "level":
+      willy = scenario.willy
+      def level(willy = willy, level = p[2]):
+        if level < 0 or level > 2:
+          contextErrors.append(
+            ("Linea %d, columna %d:\tWilly solo tiene los niveles 0-2 " +\
+              "para la grua.") % \
+            (errX, errY)
+          )
+          ST.terminate = True
+        else: willy.level = level
+      p[0] = level
 
-def p_willyInstruction3(p):
-    # Instrucciones basicas con 3 tokens.
-    '''willyInstruction3    : TkPick TkId TkSemiColon
-                            | TkDrop TkId TkSemiColon
-                            | TkSet TkId TkSemiColon
-                            | TkClear TkId TkSemiColon
-                            | TkFlip TkId TkSemiColon'''
-    if ST.find("begin-task"):
-        error = False
-
-        if ST.findNotGlobal(p[2]):
-            # Si la accion es pick o drop, verificamos que el ID sea un Object-type.
-            if p[1] in ["pick", "drop"]:
-                if ST.find(p[2]).elementType != "Object-type":
-                    pos = getPosition(p.lexpos(2), tokensList)
-                    contextErrors.append(
-                        "Linea %d, columna %d:\tSe debe colocar un elemento del tipo Object-type." % \
-                        (pos[0], pos[1])
-                    )
-                    error = True
-
-            # En cambio, verificamos que el ID sea un booleano.
-            else:
-                if ST.find(p[2]).elementType != "Boolean":
-                    pos = getPosition(p.lexpos(2), tokensList)
-                    contextErrors.append(
-                        "Linea %d, columna %d:\tSe debe colocar un elemento del tipo Boolean." % \
-                        (pos[0], pos[1])
-                    )
-                    error = True
-
-        # Si el ID definido no existe, error.
-        else:
-            pos = getPosition(p.lexpos(2), tokensList)
-            contextErrors.append(
-                "Linea %d, columna %d:\tID '%s' no definido." % \
-                (pos[0], pos[1], p[2])
-            )
-            error = True
-
-        if not error:
-            world = ST.find("begin-task").world
-            objectId = p[2]
-            var = ST.find(p[2])
-            pos = getPosition(p.lexpos(1), tokensList)
-
-            if p[1] == "pick":
-                def pick(world = world, objectId = objectId, var = var, errX = pos[0], errY = pos[1]):
-                    if not ST.terminate:
-                        willy = world.willy
-                        worldMap = world.worldMap
-                        x, y = willy.x, willy.y
-                        num = 0
-
-                        if willy.basketObjects < willy.basketCapacity:
-                            for i in range(len(worldMap[y][x])):
-                                # Verificamos si el objeto ya se encuentran en la posicion indicada
-                                # del mapa. En caso afirmativo, solo sumamos las cantidades.
-                                if worldMap[y][x][i][0] == objectId:
-                                    worldMap[y][x][i][1] -= 1
-                                    if worldMap[y][x][i][1] == 0:
-                                        worldMap[y][x].pop(i)
-
-                                    num = 1
-                                    break
-                                
-
-                            if num == 1:
-                                willy.basketObjects += 1
-
-                                for i in range(len(willy.basketContent)):
-                                    # Verificamos si el objeto ya  se encuentran en la cesta. 
-                                    # En caso afirmativo, solo sumamos las cantidades.
-                                    if willy.basketContent[i][0].id == objectId:
-                                        willy.basketContent[i][1] += 1
-                                        num = 0
-
-                                # Si no se encuentra, agregamos a la cesta el objeto
-                                # y la cantidad que se desea colocar.
-                                if num != 0:
-                                    willy.basketContent.append([var, 1])
-
-                            else:
-                                contextErrors.append(
-                                    ("Linea %d, columna %d:\tNo se puede agarrar un objeto que " +\
-                                        "no se encuentra en la casilla actual.") % \
-                                    (errX, errY)
-                                )
-                                ST.seconds = 0.01
-                                ST.terminate = True
-
-                        else:
-                            contextErrors.append(
-                                ("Linea %d, columna %d:\tSe supero la capacidad de la cesta " +\
-                                    "de Willy.") % \
-                                (errX, errY)
-                            )
-                            ST.seconds = 0.01
-                            ST.terminate = True
-
-                        world.printData()
-                p[0] = pick
-                
-            elif p[1] == "drop":
-                def drop(world = world, objectId = objectId, var = var, errX = pos[0], errY = pos[1]):
-                    if not ST.terminate:
-                        willy = world.willy
-                        worldMap = world.worldMap
-                        x, y = willy.x, willy.y
-                        num = 0
-                        for i in range(len(willy.basketContent)):
-                            # Verificamos si el objeto ya  se encuentran en la cesta. 
-                            # En caso afirmativo, solo sumamos las cantidades.
-                            if willy.basketContent[i][0].id == objectId:
-                                willy.basketContent[i][1] -= 1
-                                if willy.basketContent[i][1] == 0:
-                                    willy.basketContent.pop(i)
-                                num = 1
-                                break
-
-                        if num == 1:
-                            willy.basketObjects -= 1
-
-                            for i in range(len(worldMap[y][x])):
-                                # Verificamos si el objeto ya se encuentran en la posicion indicada
-                                # del mapa. En caso afirmativo, solo sumamos las cantidades.
-                                if worldMap[y][x][i][0] == objectId:
-                                    worldMap[y][x][i][1] += 1
-                                    num = 0
-
-                            # Si no se encuentra, agregamos a la ubicacion en el mapa el objeto
-                            # y la cantidad que se desea colocar.
-                            if num != 0:
-                                worldMap[y][x].append([objectId, 1])
-                        else:
-                            contextErrors.append(
-                                ("Linea %d, columna %d:\tNo se puede soltar un objeto que " +\
-                                    "no se encuentra en la cesta de Willy.") % \
-                                (errX, errY)
-                            )
-                            ST.seconds = 0.01
-                            ST.terminate = True
-
-                        world.printData()
-                p[0] = drop
-
-            elif p[1] == "set":
-                def setBool(var = var):
-                    if not ST.terminate:
-                        var.data = True
-                p[0] = setBool
-
-            elif p[1] == "clear":
-                def clear(var = var):
-                    if not ST.terminate:
-                        var.data = False
-                p[0] = clear
-
-            else:
-                def flip(var = var):
-                    if not ST.terminate:
-                        var.data = not var.data
-                p[0] = flip
-
-def p_willyInstruction5(p):
-    # Instruccion basica con 5 tokens.
-    '''willyInstruction5    : TkSet TkId TkTo testExpression TkSemiColon
-                            | TkSet TkId TkTo TkTrue TkSemiColon
-                            | TkSet TkId TkTo TkFalse TkSemiColon'''
-
-    if ST.find("begin-task"):
-        error = False
-
-        if not (p[4] in ["true", "false"]):
-            # Si el ID definido no existe, error.
-            if not ST.findNotGlobal(p[2]):
-                pos = getPosition(p.lexpos(2), tokensList)
-                contextErrors.append(
-                    "Linea %d, columna %d:\tID '%s' no definido." % \
-                    (pos[0], pos[1], p[2])
-                )
-                error = True
-
-            # En cambio si el ID no es booleano, error.
-            elif ST.findNotGlobal(p[2]).elementType != "Boolean":
-                pos = getPosition(p.lexpos(2), tokensList)
-                contextErrors.append(
-                    "Linea %d, columna %d:\tSe debe colocar un elemento del tipo Boolean." % \
-                    (pos[0], pos[1])
-                )
-                error = True
-
-            if not error:
-                var = ST.findNotGlobal(p[2])
-                expression = p[4]
-
-                def setTo(var = var, expression = expression):
-                    if not ST.terminate:
-                        var.data = expression()
-
-                p[0] = setTo
-        
-        else:
-            var = ST.findNotGlobal(p[2])
-            expression = (p[4] == "true")
-
-            def setTo(var = var, expression = expression):
-                if not ST.terminate:
-                    var.data = expression
-
-            p[0] = setTo
+    else: p[0] = p[1]
 
 def p_willyInstructionId(p):
-    # Verifica que el ID indicado sea una instruccion.
-    '''willyInstructionId : TkId'''
+  # Verifica que el ID indicado sea una instruccion.
+  '''willyInstructionId : TkId'''
 
-    if ST.find("begin-task"):
-        error = False
+  if ST.find("begin-task"):
+    error = False
 
-        instruction = ST.findNotGlobal(p[1])
-        # Si el ID indicado no existe, error.
-        if not instruction:
-            pos = getPosition(p.lexpos(1), tokensList)
-            contextErrors.append(
-                "Linea %d, columna %d:\tID '%s' no definido." % \
-                (pos[0], pos[1], p[1])
-            )
-            error = True
+    instruction = ST.findNotGlobal(p[1])
+    # Si el ID indicado no existe, error.
+    if not instruction:
+      pos = getPosition(p.lexpos(1), tokensList)
+      contextErrors.append(
+        "Linea %d, columna %d:\tID '%s' no definido." % \
+        (pos[0], pos[1], p[1])
+      )
+      error = True
 
-        # En cambio si no es una instruccion, error.
-        elif instruction.elementType != "define":
-            pos = getPosition(p.lexpos(1), tokensList)
-            contextErrors.append(
-                "Linea %d, columna %d:\tSe debe colocar un elemento del tipo Instruction." % \
-                (pos[0], pos[1])
-            )
-            error = True
+    # En cambio si no es una instruccion, error.
+    elif instruction.elementType != "define":
+      pos = getPosition(p.lexpos(1), tokensList)
+      contextErrors.append(
+        "Linea %d, columna %d:\tSe debe colocar un elemento del tipo Instruction." % \
+        (pos[0], pos[1])
+      )
+      error = True
 
-        if not error:
-            task = ST.find("begin-task")
-            def execId(task = task, ID = p[1], scopeID = instruction.scopeId):
-                for e in task.context:
-                    if e.id == ID and scopeID == e.scopeId:
-                        e.data()
-            p[0] = execId 
+    if not error:
+      task = ST.find("begin-task")
+      def execId(task = task, ID = p[1], scopeID = instruction.scopeId):
+        for e in task.context:
+          if e.id == ID and scopeID == e.scopeId: e.data()
+      p[0] = execId 
 
 
-# BLOCKS
-def p_if(p):
-    # Define el condicional if.
-    '''if   : TkIf testExpression TkThen instruction
-            | TkIf testExpression TkThen instruction TkElse instruction'''
-    if ST.find("begin-task"):
-        expression = p[2]
-        inst = p[4]
 
-        if len(p) == 5:
-            def cond(expression = expression, inst = inst):
-                if expression() and not ST.terminate:
-                    inst()
-        else:
-            inst2 = p[6]
-            def cond(expression = expression, inst = inst, inst2 = inst2):
-                if expression() and not ST.terminate:
-                    inst()
-                elif not ST.terminate:
-                    inst2()
+########################### IGNORED TOKENS ###########################
+def p_empty(p):
+  'empty :  '
 
-        p[0] = cond
+def p_ignore(p):
+  '''ignore : TkTab
+            | TkNewLine
+            | TkLineComment
+            | TkBlockComment
+            | TkSpace'''
+
+def p_error(p):
+  """ Token de error. """
+  pos = getPosition(p.lexpos, tokensList)
+  if pos != None:
+    syntax.append(
+      "Linea %d, columna %d:\tError de sintaxis." % (pos[0], pos[1]) + "\n" +
+      "\t> " + getLine(text, p.lexpos) + "\n"
+      "\t" + " "*(pos[1] + 1) + "^"
+    )
+    p.lexer.skip(1)
     
-def p_repeat(p):
-    # Define el ciclo repeat.
-    '''repeat : TkRepeat TkNum TkTimes instruction'''
-    
-    if ST.find("begin-task"):
-        # Obtenemos la identacion correcta.
-        num = int(p[2])
-        func = p[4]
-        def repeat(num = num, func = func):
-            if not ST.terminate:
-                for i in range(num):
-                    func()
-
-        p[0] = repeat
-
-def p_while(p):
-    # Define el ciclo repeat.
-    '''while : TkWhile testExpression TkDo instruction'''
-    
-    if ST.find("begin-task"):
-        expression = p[2]
-        instruction = p[4]
-        def loop(expression = expression, instruction = instruction):
-            while expression() and not ST.terminate:
-                instruction()
-
-        p[0] = loop
-
-def p_beginInstruction(p):
-    # Permite colocar bloques de instrucciones.
-    '''beginInstruction : TkBegin taskInstruction TkEnd TkSemiColon
-                        | TkBegin taskInstruction TkEnd
-                        | TkBegin TkEnd'''
-
-    if ST.find("begin-task"):
-        if len(p) == 3:
-            p[0] = skip
-        else:
-            p[0] = p[2]
+    syntax[0] = False
 
 
-# DEFINE
-def p_defineInstruction(p):
-    # Permiter definir instrucciones dado un ID.
-    '''defineInstruction : startDefine instDefine'''
-    p[0] = skip
 
-def p_startDefine(p):
-    # Permite entrar en un nuevo contexto al definir una instruccion.
-    '''startDefine : TkDefine TkId'''
+########################### PRECEDENCE ###########################
+precedence = (
+    # Precedencia de los if/else.
+    ('left', 'TkThen'),
+    ('left', 'TkElse'),
 
-    if ST.find("begin-task"):
+    # Precedencia de los operadores booleanos.
+    ('left', 'TkEquiv'),
+    ('left', 'TkNotEqual'),
+    ('left', 'TkOr'),
+    ('left', 'TkAnd'),
+    ('left', 'TkNot'),
 
-        error = False
+    # Precedencia de los operadores numericos enteros.
+    ('left', 'TkPlus'),
+    ('left', 'TkMinus'),
+    ('left', 'TkMult'),
+)
 
-        # Si el head de la tabla de simbolos es mayor que 1, significa que
-        # estamos dentro de un define, por lo que va a haber una variable
-        # falsa foo, asi que momentaneamente hacemos que el ID de esa variable
-        # sea vacia.
-        if ST.head > 1:
-            fooId = ST.tables[ST.head][0].id
-            ST.tables[ST.head][0].id = ""
-            if ST.findNotGlobal(p[2], ST.head):
-                pos = getPosition(p.lexpos(2), tokensList)
-                contextErrors.append(
-                    "Linea %d, columna %d:\tID '%s' ya definido." % \
-                    (pos[0], pos[1], p[2])
-                )
-                error = True
-            ST.tables[ST.head][0].id = fooId
-
-        elif ST.findNotGlobal(p[2], ST.head):
-            pos = getPosition(p.lexpos(2), tokensList)
-            contextErrors.append(
-                "Linea %d, columna %d:\tID '%s' ya definido." % \
-                (pos[0], pos[1], p[2])
-            )
-            error = True
+# Build the parser
+yacc.yacc()
 
 
-        if not error:
-            # Creamos una nueva variable del tipo Instruction y actualizamos sus datos.
-            newInstruction = Variable("define", "define", "", "Instructions")
-            newInstruction.scopeId = ST.scopeId
-            newInstruction.name = p[2]
-            newInstruction.declarationBlock = ST.declarationBlock
+if __name__ == "__main__":
+  # Obtenemos el texto
+  file = open(argv[1], 'r')
+  text = file.read()
+  file.close()
 
-            # Actualizamos el scopeId/declarationBlock.
-            ST.declarationBlock = ST.scopeId
-            ST.scopeId += 1
+  # Ejecutamos el lexer. Agregamos un salto de linea al final para que se puedan
+  # reconocer los comentarios de linea en la ultima linea.
+  lexerErrors = lexer(text + "\n")
 
-            # Insertamos la instruction a la tabla de simbolos.
-            ST.insert(newInstruction)
+  # Verificamos si hay errores en el lexer.
+  if len(lexerErrors) < 1:
+    result = yacc.parse(text)
 
-            task = ST.find("begin-task")
-            task.context.append(newInstruction)
+    # Verificamos si hay errores de sintaxis.
+    if not syntax[0]:
+      # Imprimimos errores de contexto.
+      print("\033[1mErrores encontrados:\033[0m")
+      print(syntax[1])
 
-            ST.push_empty_table()
+    # Verificamos si hay errores de conexto.
+    elif len(contextErrors) > 0:
+      # Imprimimos errores de contexto.
+      print("\033[1mErrores encontrados:\033[0m")
+      for e in contextErrors:
+        print(e)
 
-            # Insertamos una variable falsa para que esta instruccion pueda ser llamada
-            # desde dentro de su definicion
-            foo = Variable(p[2], "define", skip, "Instructions")
-            foo.id = foo.name
-            foo.scopeId = ST.scopeId-1
-            ST.insert(foo)
-
-def p_instDefine(p):
-    # Permite definir una instruccion y luego regresar al contexto anterior.
-    '''instDefine : TkAs instruction'''
-
-    if ST.find("begin-task") and ST.findNotGlobal("define", level=ST.head-1):
-
-        # Obtenemos las instrucciones definidas dentro del define.
-        instructions = ST.pop()
-        # Removemos la variable falsa
-        instructions.pop(0)
-
-        # Actualizamos la informacion de la instruccion definida.
-        newInstruction = ST.findNotGlobal("define", level=ST.head)
-        newInstruction.data = p[2]
-        newInstruction.id = newInstruction.name
-
-        # Actualizamos el declarationBlock.
-        ST.declarationBlock = newInstruction.declarationBlock
-
-
-# TESTS EXPRESSIONS
-def p_testExpression(p):
-    '''testExpression   : testExpression TkAnd testTerm
-                        | testExpression TkOr testTerm
-                        | testTerm'''
-    if len(p) == 2:
-        p[0] = p[1]
-    elif p[2] == "and":
-        expression = p[1]
-        term = p[3]
-        def andTerm(expression = expression, term = term):
-            return expression() and term()
-        p[0] = andTerm
+    # No hay errores, asi que ejecutamos el programa.
     else:
-        expression = p[1]
-        term = p[3]
-        def orTerm(expression = expression, term = term):
-            return expression() or term()
-        p[0] = orTerm
+      for e in toExec:
+        # Verificamos si despues de ejecutar cada instruccion ocurren errores.
+        if len(contextErrors) < 1: e()
+        else: break
 
-def p_testTerm(p):
-    '''testTerm : TkNot testFactor
-                | testFactor'''
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        factor = p[2]
-        def notFactor(factor = factor):
-            return not factor()
-        p[0] = notFactor
+      # Si hay errores durante la ejecucion, se imprimen.
+      if len(contextErrors) > 0:
+        # Imprimimos errores de contexto.
+        print("\033[1mErrores encontrados:\033[0m")
+        for e in contextErrors:
+          print(e)
 
-def p_testFactor(p):
-    '''testFactor   : frontClear
-                    | leftClear
-                    | rightClear
-                    | lookingNorth
-                    | lookingEast
-                    | lookingSouth
-                    | lookingWest
-                    | foundCarrying
-                    | TkOpenParent testExpression TkCloseParent
-                    | boolId'''
-
-    if ST.find("begin-task"):
-        if len(p) == 2:
-            p[0] = p[1]
-        else:
-            p[0] = p[2]
-
-def p_frontClear(p):
-    '''frontClear : TkFrontClear'''
-    if ST.find("begin-task"):
-        willy = ST.find("begin-task").world.willy
-        worldMap = ST.find("begin-task").world.worldMap
-
-        def frontClear(willy = willy, worldMap = worldMap):
-            x, y, orientation = willy.x, willy.y, willy.look
-
-            if orientation == "north" and y > 0:
-                if not ["Wall"] in worldMap[y-1][x]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "south" and y < len(worldMap)-1:
-                if not ["Wall"] in worldMap[y+1][x]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "east" and x < len(worldMap[0])-1:
-                if not ["Wall"] in worldMap[y][x+1]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "west" and x > 0:
-                if not ["Wall"] in worldMap[y][x-1]:
-                    return True 
-                else:
-                    return False
-            
-            else:
-                return False
-        p[0] = frontClear
-
-def p_leftClear(p):
-    '''leftClear : TkLeftClear'''
-    if ST.find("begin-task"):
-        willy = ST.find("begin-task").world.willy
-        worldMap = ST.find("begin-task").world.worldMap
-
-        def leftClear(willy = willy, worldMap = worldMap):
-            x, y, orientation = willy.x, willy.y, willy.look
-            if orientation == "east" and y > 0:
-                if not ["Wall"] in worldMap[y-1][x]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "west" and y < len(worldMap)-1:
-                if not ["Wall"] in worldMap[y+1][x]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "south" and x < len(worldMap[0])-1:
-                if not ["Wall"] in worldMap[y][x+1]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "north" and x > 0:
-                if not ["Wall"] in worldMap[y][x-1]:
-                    return True 
-                else:
-                    return False
-            
-            else:
-                return False
-        p[0] = leftClear
-
-def p_rightClear(p):
-    '''rightClear : TkRightClear'''
-    if ST.find("begin-task"):
-        willy = ST.find("begin-task").world.willy
-        worldMap = ST.find("begin-task").world.worldMap
-
-        def rigthClear(willy = willy, worldMap = worldMap):
-            x, y, orientation = willy.x, willy.y, willy.look
-            if orientation == "west" and y > 0:
-                if not ["Wall"] in worldMap[y-1][x]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "east" and y < len(worldMap)-1:
-                if not ["Wall"] in worldMap[y+1][x]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "north" and x < len(worldMap[0])-1:
-                if not ["Wall"] in worldMap[y][x+1]:
-                    return True 
-                else:
-                    return False
-
-            elif orientation == "south" and x > 0:
-                if not ["Wall"] in worldMap[y][x-1]:
-                    return True 
-                else:
-                    return False
-            
-            else:
-                return False
-        p[0] = rigthClear
-
-def p_lookingNorth(p):
-    '''lookingNorth : TkLookingNorth'''
-    if ST.find("begin-task"):
-        willy = ST.find("begin-task").world.willy
-
-        def looking(willy = willy):
-            return (willy.look == "north")
-        p[0] = looking
-
-def p_lookingSouth(p):
-    '''lookingSouth : TkLookingSouth'''
-    if ST.find("begin-task"):
-        willy = ST.find("begin-task").world.willy
-
-        def looking(willy = willy):
-            return (willy.look == "south") 
-        p[0] = looking
-
-def p_lookingEast(p):
-    '''lookingEast : TkLookingEast'''
-    if ST.find("begin-task"):
-        willy = ST.find("begin-task").world.willy
-
-        def looking(willy = willy):
-            return (willy.look == "east")
-        p[0] = looking
-
-def p_lookingWest(p):
-    '''lookingWest : TkLookingWest'''
-    if ST.find("begin-task"):
-        willy = ST.find("begin-task").world.willy
-
-        def looking(willy = willy):
-            return (willy.look == "west")
-        p[0] = looking
-
-def p_foundCarrying(p):
-    '''foundCarrying    : TkFound TkOpenParent TkId TkCloseParent
-                        | TkCarrying TkOpenParent TkId TkCloseParent'''
-
-    if ST.find("begin-task"):
-        error = False
-
-        # Si el ID indicado no existe, error.
-        if not ST.findNotGlobal(p[3]):
-            pos = getPosition(p.lexpos(3), tokensList)
-            contextErrors.append(
-                "Linea %d, columna %d:\tID '%s' no definido." % \
-                (pos[0], pos[1], p[3])
-            )
-            error = True
-
-        # En cambio si no es un Object-type, error.
-        elif ST.findNotGlobal(p[3]).elementType != "Object-type":
-            pos = getPosition(p.lexpos(3), tokensList)
-            contextErrors.append(
-                "Linea %d, columna %d:\tSe debe colocar un elemento del tipo Object-type." % \
-                (pos[0], pos[1])
-            )
-            error = True
-
-        if (not error) and (p[1] == "found"):
-            willy = ST.find("begin-task").world.willy
-            worldMap = ST.find("begin-task").world.worldMap
-            objectId = p[3]
-
-            def found(willy = willy, worldMap = worldMap, objectId = objectId):
-                x, y = willy.x, willy.y
-
-                for m in worldMap[y][x]:
-                    if m[0] == objectId:
-                        return True
-
-                return False
-            p[0] = found
-
-        elif (not error) and (p[1] == "carrying"):
-            willy = ST.find("begin-task").world.willy
-            objectId = p[3]
-
-            def carrying(willy = willy, objectId = objectId):
-                for i in range(len(willy.basketContent)):
-                    if willy.basketContent[i][0].id == objectId:
-                        return True
-
-                return False
-            p[0] = carrying
-
-        elif error:
-            p[0] = rFalse
+  else:
+    # Imprimimos los errores del lexer.
+    print("\033[1mErrores encontrados:\033[0m")
+    for e in lexerErrors:
+      print(
+        "Linea %d, columna %d:\tCaracter ilegal %s" % \
+        (e.lineno, getColumn(text, e.lexpos), e.value[0])
+      )

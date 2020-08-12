@@ -16,8 +16,6 @@ reserved = {
   "yellow": "TkYellow",
   "blue": "TkBlue",
   "red": "TkRed",
-  "left": "TkLeft",
-  "right": "TkRight",
   "if": "TkIf",
   "then": "TkThen",
   "else": "TkElse",
@@ -30,7 +28,6 @@ reserved = {
   "define": "TkDefine",
   "as": "TkAs",
   "move": "TkMove",
-  "identify": "TkIdentify",
   "take": "TkTake",
   "level": "TkLevel",
   "drop": "TkDrop",
@@ -38,23 +35,31 @@ reserved = {
   "False": "TkFalse",
   "bool": "TkBoolean",
   "int": "TkInteger",
+  "north": "TkNorth",
+  "south": "TkSouth",
+  "east": "TkEast",
+  "west": "TkWest",
+  "and": "TkAnd",
+  "or": "TkOr",
+  "not": "TkNot",
+  "terminate": "TkTerminate",
 }
 
 # Lista de tokens
 tokens = [
   # Oraciones reservadas
-  "TkWithInitialValue",
   "TkStartAt",
   "TkBeginScenario",
   "TkEndScenario",
   "TkPlaceBlock",
   "TkBeginTask",
-  "TkEendTask",
+  "TkEndTask",
   "TkTurnL",
-  "TkTrunR",
+  "TkTurnR",
   "TkDetectL",
   "TkDetectR",
   "TkDetectF",
+  "TkLastIdBlockIs",
 
   # Caracteres simples
   "TkSemiColon",
@@ -68,7 +73,7 @@ tokens = [
   "TkLessT",
   "TkLessEq",
   "TkGreatT",
-  "TkGratEq",
+  "TkGreatEq",
   "TkNotEqual",
   "TkSpace",
   "TkTab",
@@ -76,7 +81,7 @@ tokens = [
 
   # Tokens generales
   "TkNum",
-  "TkBNum"
+  "TkBNum",
   "TkId",
 
   # Comentarios
@@ -85,8 +90,8 @@ tokens = [
 ] + list(reserved.values())
 
 # Definicion de las Tokens oraciones reservadas
-def t_TkWithInitialValue(t):
-  r'with initial value'
+def t_TkLastIdBlockIs(t):
+  r'last identified block is'
   return t
 def t_TkStartAt(t):
   r'Start at'
