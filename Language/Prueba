@@ -6,7 +6,7 @@ begin-scenario
     Start at 1 1 heading south;
     bool FALSE = False;
     bool TRUE = True;
-    int Zero = 0;
+    int #zero = 0;
 
     -- BLOCKS
     -- Left 0,0

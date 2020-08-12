@@ -171,12 +171,12 @@ def t_TkNum(t):
 def t_TkBNum(t):
   r'B\d+'
   return t
+def t_TkNId(t):
+  r'\#[a-zA-Z_][a-zA-Z0-9_]*'
+  return t
 def t_TkId(t):
   r'[a-zA-Z_][a-zA-Z0-9_]*'
   t.type = reserved.get(t.value, 'TkId')    # Check for reserved words
-  return t
-def t_TkNId(t):
-  r'0[a-zA-Z_][a-zA-Z0-9_]*'
   return t
 
 

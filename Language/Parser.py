@@ -490,8 +490,8 @@ def p_boolean(p):
 
 def p_integer(p):
   # Permite definir una variable entera
-  '''integer : TkInteger TkId TkEqual TkNum TkSemiColon'''
-
+  '''integer : TkInteger TkNId TkEqual TkNum TkSemiColon'''
+  
   if ST.find("begin-scenario"):
     # Si ya se definio el ID indicado, error.
     if ST.findNotGlobal(p[2]):

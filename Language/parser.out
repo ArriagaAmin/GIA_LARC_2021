@@ -33,7 +33,7 @@ Rule 27    placeBlock -> TkPlaceBlock color TkAt position TkSemiColon
 Rule 28    startAt -> TkStartAt position TkHeading orientation TkSemiColon
 Rule 29    boolean -> TkBoolean TkId TkEqual TkTrue TkSemiColon
 Rule 30    boolean -> TkBoolean TkId TkEqual TkFalse TkSemiColon
-Rule 31    integer -> TkInteger TkId TkEqual TkNum TkSemiColon
+Rule 31    integer -> TkInteger TkNId TkEqual TkNum TkSemiColon
 Rule 32    boolExpression -> boolExpression TkEquiv boolTerm
 Rule 33    boolExpression -> boolExpression TkNotEqual boolTerm
 Rule 34    boolExpression -> boolTerm
@@ -150,7 +150,7 @@ TkGreatEq            : 62
 TkGreatT             : 61
 TkGreen              : 23
 TkHeading            : 28
-TkId                 : 29 30 31 56 90 91 99 109
+TkId                 : 29 30 56 90 91 99 109
 TkIf                 : 92 93
 TkInteger            : 31
 TkLastIdBlockIs      : 53 54 55
@@ -162,7 +162,7 @@ TkMinus              : 64
 TkMod                : 67
 TkMove               : 101
 TkMult               : 66
-TkNId                : 72
+TkNId                : 31 72
 TkNewLine            : 112
 TkNorth              : 17
 TkNot                : 38
@@ -322,7 +322,7 @@ state 5
     (28) startAt -> . TkStartAt position TkHeading orientation TkSemiColon
     (29) boolean -> . TkBoolean TkId TkEqual TkTrue TkSemiColon
     (30) boolean -> . TkBoolean TkId TkEqual TkFalse TkSemiColon
-    (31) integer -> . TkInteger TkId TkEqual TkNum TkSemiColon
+    (31) integer -> . TkInteger TkNId TkEqual TkNum TkSemiColon
 
     TkEndScenario   shift and go to state 17
     TkSemiColon     shift and go to state 19
@@ -503,7 +503,7 @@ state 16
     (28) startAt -> . TkStartAt position TkHeading orientation TkSemiColon
     (29) boolean -> . TkBoolean TkId TkEqual TkTrue TkSemiColon
     (30) boolean -> . TkBoolean TkId TkEqual TkFalse TkSemiColon
-    (31) integer -> . TkInteger TkId TkEqual TkNum TkSemiColon
+    (31) integer -> . TkInteger TkNId TkEqual TkNum TkSemiColon
 
     TkEndScenario   shift and go to state 56
     TkSemiColon     shift and go to state 58
@@ -635,9 +635,9 @@ state 26
 
 state 27
 
-    (31) integer -> TkInteger . TkId TkEqual TkNum TkSemiColon
+    (31) integer -> TkInteger . TkNId TkEqual TkNum TkSemiColon
 
-    TkId            shift and go to state 69
+    TkNId           shift and go to state 69
 
 
 state 28
@@ -1448,7 +1448,7 @@ state 68
 
 state 69
 
-    (31) integer -> TkInteger TkId . TkEqual TkNum TkSemiColon
+    (31) integer -> TkInteger TkNId . TkEqual TkNum TkSemiColon
 
     TkEqual         shift and go to state 122
 
@@ -2901,7 +2901,7 @@ state 121
 
 state 122
 
-    (31) integer -> TkInteger TkId TkEqual . TkNum TkSemiColon
+    (31) integer -> TkInteger TkNId TkEqual . TkNum TkSemiColon
 
     TkNum           shift and go to state 162
 
@@ -4017,7 +4017,7 @@ state 161
 
 state 162
 
-    (31) integer -> TkInteger TkId TkEqual TkNum . TkSemiColon
+    (31) integer -> TkInteger TkNId TkEqual TkNum . TkSemiColon
 
     TkSemiColon     shift and go to state 189
 
@@ -4745,14 +4745,14 @@ state 188
 
 state 189
 
-    (31) integer -> TkInteger TkId TkEqual TkNum TkSemiColon .
+    (31) integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .
 
-    TkEndScenario   reduce using rule 31 (integer -> TkInteger TkId TkEqual TkNum TkSemiColon .)
-    TkSemiColon     reduce using rule 31 (integer -> TkInteger TkId TkEqual TkNum TkSemiColon .)
-    TkPlaceBlock    reduce using rule 31 (integer -> TkInteger TkId TkEqual TkNum TkSemiColon .)
-    TkStartAt       reduce using rule 31 (integer -> TkInteger TkId TkEqual TkNum TkSemiColon .)
-    TkBoolean       reduce using rule 31 (integer -> TkInteger TkId TkEqual TkNum TkSemiColon .)
-    TkInteger       reduce using rule 31 (integer -> TkInteger TkId TkEqual TkNum TkSemiColon .)
+    TkEndScenario   reduce using rule 31 (integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .)
+    TkSemiColon     reduce using rule 31 (integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .)
+    TkPlaceBlock    reduce using rule 31 (integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .)
+    TkStartAt       reduce using rule 31 (integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .)
+    TkBoolean       reduce using rule 31 (integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .)
+    TkInteger       reduce using rule 31 (integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .)
 
 
 state 190
