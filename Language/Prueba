@@ -1,2 +1,48 @@
 -- Comentario 1
 -- Comentario 2
+
+
+begin-scenario 
+    Start at 1 1 heading south;
+    bool FALSE = False;
+    bool TRUE = True;
+    int Zero = 0;
+
+    -- BLOCKS
+    -- Left 0,0
+    Place block B7 at 4 7;
+    Place block 13 at 4 8;
+
+    -- Left 0,1
+    Place block green at 7 7;
+    Place block 5 at 8 7;
+
+    -- Left 1,1
+    Place block red at 7 10;
+    Place block B1 at 7 11;
+
+    -- Right 0,0
+    Place block blue at 13 7;
+
+    -- Right 0,1
+    Place block yellow at 14 10;    
+    Place block 4 at 13 10;    
+    Place block 10 at 14 11;    
+    Place block B15 at 13 11;    
+
+    -- Right 0,0
+    Place block 9 at 16 7;
+    Place block 13 at 16 8;
+    Place block 2 at 17 8;
+
+    -- Right 1,1
+    Place block B14 at 17 10;
+    Place block 8 at 17 11;
+
+end-scenario
+
+begin-task
+    turn-right;
+    move;
+end-task
+

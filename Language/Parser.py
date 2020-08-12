@@ -1,6 +1,7 @@
 import ply.yacc as yacc
 from sys import argv
 from Lexer import *
+from time import sleep
 
 ########################### GLOBAL VARIABLES ###########################
 # Aqui guardaremos los errores de contexto.
@@ -129,13 +130,110 @@ class Scenario:
     self.id = "begin-scenario"
     self.scopeId = -1
     # Mapa
-    self.scenarioMap = [[[] for _ in range(22)] for _ in range(22)]
-    self.shelves = [[[] for _ in range(5)] for _ in range(3)]
-    self.unRegions = [[] for _ in range(5)]
+    self.scenarioMap = [[[] for _ in range(22)] for _ in range(19)]
+    self.shelves = [[0 for _ in range(5)] for _ in range(3)]
+    self.unRegions = [0 for _ in range(7)]
     # Conjunto de symbolos definidos en el scenario.
     self.context = [] 
     # Informacion de Willy del scenario.
     self.willy = Willy() 
+
+  def printData(self):
+    """ Imprimimos los datos del mundo. """
+
+    x, y = self.willy.x, self.willy.y
+    # Limpiamos el terminal.
+    print("\033[H\033[2J")
+
+    text = "\033[00;1m\tSCENARIO \t\t\t\t\t\t\tSHELVES\033[0;0m\n"
+
+    for i in range(19):
+      line = "\t"
+
+      for j in range(22):
+        # Si existe un objeto en la i-j-esima casilla.
+        if len(self.scenarioMap[i][j]) > 0:
+          if i%3 == 0 and j%3 != 0: space = "-"
+          elif i%3 != 0 and j%3 != 0: space = " "
+          else: space = ""
+
+          obj = str(self.scenarioMap[i][j][0])
+          if obj == "blue": line += space +  "\033[36;1mB\033[0;0m" + space
+          elif obj == "red": line += space +  "\033[31;1mR\033[0;0m" + space
+          elif obj == "green": line += space +  "\033[32;1mG\033[0;0m" + space
+          elif obj == "yellow": line += space +  "\033[33;1mY\033[0;0m" + space
+          elif obj[0] == "B" and len(obj) == 2: line += space +  "\033[1;1m\033[4;1m" +\
+             str(obj[1]) + "\033[0;0m" + space
+          elif obj[0] == "B": line += space +  "\033[1;1m\033[4;1m" + chr(int(obj[1:])+55) +\
+             "\033[0;0m" + space
+          elif len(obj) > 1: line += space +  chr(int(obj)+55) + space
+          else: line += space + str(obj) + space
+
+        # En cambio, si no hay mas objetos y WILLY se encuentra aqui,
+        # agregamos a willy.
+        elif x == j and y == i:
+          if i%3 == 0 and j%3 != 0: space = "-"
+          elif i%3 != 0 and j%3 != 0: space = " "
+          else: space = ""
+
+          if self.willy.look == "north": line += space + "\033[1;1m^\033[0;0m" + space
+          elif self.willy.look == "east": line += space + "\033[1;1m>\033[0;0m" + space
+          elif self.willy.look == "south": line += space + "\033[1;1mv\033[0;0m" + space
+          else: line += space + "\033[1;1m<\033[0;0m" + space
+
+        # Esquinas.
+        elif i%3 == 0 and j%3 == 0: line += "+"
+        # Lineas verticales.
+        elif i%3 == 0: line += "---"
+        # Lineas horizontales.
+        elif j%3 == 0: line += "|"
+        else: line += "   "
+      line += "\t\t"
+
+      # ESTANTES
+      if i%2 == 0 and i < 7:
+        for j in range(11):
+          if j%2 == 0: line += "+"
+          else: line += "---"
+      elif i < 7:
+        for j in range(5):
+          line += "| " + str(self.shelves[2-i][j]) + " "
+        line += "|"
+
+
+      # ZONA DE DESCARGA
+      elif i == 8: line += "\033[0;1mUNLOADING REGIONS\033[0;0m"
+      elif i == 9 or i == 11:
+        for j in range(21):
+          if j < 3 or j > 17: color = "32"
+          elif j < 6 or j > 14: color = "36"
+          elif j < 9 or j > 11: color = "33"
+          else: color = "31"
+
+          if j%3 == 0 or (j+1)%3 == 0: line += "\033[" + color + ";1m+\033[0;0m"
+          else: line += "\033[" + color + ";1m---\033[0;0m"
+      elif i == 10:
+        for j in range(7):
+          if j==0 or j==6: color = "32"
+          elif j==1 or j==5: color = "36"
+          elif j==2 or j==4: color = "33"
+          else: color = "31"
+          line += "\033[" + color + ";1m| " + str(self.unRegions[j]) + " |\033[0;0m"
+
+
+      # INFORMACION DE WILLY
+      elif i == 13: line += "\033[0;1mWILLY\033[0;0m"
+      elif i == 14: line += "    Position: [" + str(self.willy.x) + ", " + str(18-self.willy.y) + "]"
+      elif i == 15: line += "    Orientation: " + self.willy.look
+      elif i == 16: line += "    Block: " + str(self.willy.block)
+      elif i == 17: line += "    Last identified block: " + str(self.willy.blockId)
+      elif i == 18: line += "    Level grua: " + str(self.willy.level)
+      
+      # Agregamos la linea al texto.
+      text += line + "\n"
+      
+    print(text)
+    sleep(0.5)
   
 class Task:
   """ Clase que guarda la informacion de una tarea en el lenguaje Willy*. """
@@ -188,8 +286,7 @@ def p_universo(p):
 # SCENARIO DEFINITION
 def p_beginScenario(p):
   # Permite definir un escenario. 
-  '''beginScenario  : beginS scenarioInstructions endS
-                    | beginS endS'''
+  '''beginScenario  : beginS endS'''
 
 def p_beginS(p):
   # Permite crear un nuevo contexto para el scenario actual una vez inicializado. 
@@ -200,7 +297,8 @@ def p_beginS(p):
 def p_endS(p):
   # Permite actualizar la informacion del escenario dada su definicion, y 
   # agrega el symbolo al contexto global.
-  '''endS : TkEndScenario'''
+  '''endS : scenarioInstructions TkEndScenario
+          | TkEndScenario'''
 
   # El condicional 'if ST.find("begin-scenario")' se usara constantemente en
   # las producciones del scenario, y verifica que se haya creado correctamente
@@ -228,15 +326,16 @@ def p_endS(p):
 def p_scenarioInstructions(p):
   # Permite concatenar instrucciones del escenario.
   '''scenarioInstructions : scenarioInstructions scenarioInstruction
-                          | scenarioInstruction'''
+                          | scenarioInstructions TkSemiColon
+                          | scenarioInstruction
+                          | TkSemiColon'''
 
 def p_scenarioInstruction(p):
   # Instrucciones del escenario.
   '''scenarioInstruction  : placeBlock
                           | startAt
                           | boolean
-                          | integer
-                          | TkSemiColon'''
+                          | integer'''
 
 def p_position(p):
   # Verificamos la correctitud de una posicion en el mapa.
@@ -268,10 +367,10 @@ def p_position(p):
       error = True
 
     # Si la fila se sale del mapa, error.
-    if p[2] > 21:
+    if p[2] > 18:
         pos = getPosition(p.lexpos(2), tokensList)
         contextErrors.append(
-          "Linea %d, columna %d:\tSe indico una fila superior a la 21 %d." % \
+          "Linea %d, columna %d:\tSe indico una fila superior a la 18 %d." % \
           (pos[0], pos[1], p[2], 21)
         )
         error = True
@@ -306,20 +405,19 @@ def p_color(p):
 
 def p_placeBlock(p):
     # Permite colocar bloques en ubicaciones especificas del mundo.
-    '''placeBlock : TkPlaceBlock TkNum position TkSemiColon
-                  | TkPlaceBlock TkBNum position TkSemiColon
-                  | TkPlaceBlock color position TkSemiColon'''
-
+    '''placeBlock : TkPlaceBlock TkNum TkAt position TkSemiColon
+                  | TkPlaceBlock TkBNum TkAt position TkSemiColon
+                  | TkPlaceBlock color TkAt position TkSemiColon'''
     if ST.find("begin-scenario"):
-        error = p[3][0]
+        error = p[4][0]
 
         # Cantidad a colocar, ID del objeto y posicion donde se desea ubicar.
-        block, x, y = p[2], p[3][1], p[3][2]
+        block, x, y = str(p[2]), p[4][1], p[4][2]
         # Obtenemos el mapa
         scenarioMap = ST.find("begin-scenario").scenarioMap
 
         # Si en la ubicacion indicada hay otro bloque, error.
-        if not error and len(scenarioMap[rows - y - 1][x]) > 0:
+        if not error and len(scenarioMap[18 - y][x]) > 0:
           pos = getPosition(p.lexpos(1), tokensList)
           contextErrors.append(
             "Linea %d, columna %d:\tYa se coloco un bloque en esa posicion." % \
@@ -327,8 +425,21 @@ def p_placeBlock(p):
           )
           error = True
 
+        if not block in ["blue", "red", "green", "yellow"]:
+          if block[0] == "B": num = int(block[1:])
+          else: num = int(block)
+
+          if num < 1 or num > 15:
+            pos = getPosition(p.lexpos(1), tokensList)
+            contextErrors.append(
+              "Linea %d, columna %d:\tLos bloques numericos solo pueden tener " +\
+                "un numero del 1 al 15." % \
+              (pos[0], pos[1])
+            )
+            error = True
+
         if not error:
-          scenarioMap[rows - y - 1][x].append(block)
+          scenarioMap[18 - y][x].append(block)
 
 def p_startAt(p):
   # Permite definir la posicion inicial de Willy.
@@ -345,7 +456,7 @@ def p_startAt(p):
     willy = ST.find("begin-scenario").willy
 
     # Si se indica una posicion donde se encuentra un bloque, error.
-    if not error and len(scenarioMap[rows - y - 1][x]) > 0:
+    if not error and len(scenarioMap[18 - y][x]) > 0:
       pos = getPosition(p.lexpos(1), tokensList)
       contextErrors.append(
         "Linea %d, columna %d:\tNo se puede colocar a Willy encima de un bloque" % \
@@ -355,7 +466,7 @@ def p_startAt(p):
 
     if not error:
       # Actualizamos la informacion de Willy.
-      willy.x, willy.y, willy.look = x, rows-y-1, look
+      willy.x, willy.y, willy.look = x, 18-y, look
 
 def p_boolean(p):
   # Permite definir una variable booleana.
@@ -615,50 +726,47 @@ def p_boolIntExpression(p):
                         | intExpression TkGreatT intExpression
                         | intExpression TkGreatEq intExpression'''
 
-  if (len(p) == 2) and (p[1] != None):
-    p[0] = p[1]
-  elif len(p) == 4:
-    if (p[2] == "==") and (p[1] != None) and (p[3] != None):
-      expression = p[1]
-      term = p[3]
-      def equivTerm(expression = expression, term = term):
-        return expression() == term()
-      p[0] = equivTerm
+  if (p[3] == "==") and (p[1] != None) and (p[3] != None):
+    expression = p[1]
+    term = p[3]
+    def equivTerm(expression = expression, term = term):
+      return expression() == term()
+    p[0] = equivTerm
 
-    elif (p[2] == "!=") and (p[1] != None) and (p[3] != None):
-      expression = p[1]
-      term = p[3]
-      def equivTerm(expression = expression, term = term):
-        return expression() != term()
-      p[0] = equivTerm
+  elif (p[2] == "!=") and (p[1] != None) and (p[3] != None):
+    expression = p[1]
+    term = p[3]
+    def equivTerm(expression = expression, term = term):
+      return expression() != term()
+    p[0] = equivTerm
 
-    elif (p[2] == "<") and (p[1] != None) and (p[3] != None):
-      expression = p[1]
-      term = p[3]
-      def equivTerm(expression = expression, term = term):
-        return expression() < term()
-      p[0] = equivTerm
+  elif (p[2] == "<") and (p[1] != None) and (p[3] != None):
+    expression = p[1]
+    term = p[3]
+    def equivTerm(expression = expression, term = term):
+      return expression() < term()
+    p[0] = equivTerm
 
-    elif (p[2] == "<=") and (p[1] != None) and (p[3] != None):
-      expression = p[1]
-      term = p[3]
-      def equivTerm(expression = expression, term = term):
-        return expression() <= term()
-      p[0] = equivTerm
-    
-    elif (p[2] == ">") and (p[1] != None) and (p[3] != None):
-      expression = p[1]
-      term = p[3]
-      def equivTerm(expression = expression, term = term):
-        return expression() > term()
-      p[0] = equivTerm
+  elif (p[2] == "<=") and (p[1] != None) and (p[3] != None):
+    expression = p[1]
+    term = p[3]
+    def equivTerm(expression = expression, term = term):
+      return expression() <= term()
+    p[0] = equivTerm
+  
+  elif (p[2] == ">") and (p[1] != None) and (p[3] != None):
+    expression = p[1]
+    term = p[3]
+    def equivTerm(expression = expression, term = term):
+      return expression() > term()
+    p[0] = equivTerm
 
-    elif (p[2] == ">=") and (p[1] != None) and (p[3] != None):
-      expression = p[1]
-      term = p[3]
-      def equivTerm(expression = expression, term = term):
-        return expression() >= term()
-      p[0] = equivTerm
+  elif (p[2] == ">=") and (p[1] != None) and (p[3] != None):
+    expression = p[1]
+    term = p[3]
+    def equivTerm(expression = expression, term = term):
+      return expression() >= term()
+    p[0] = equivTerm
 
 
 ########################### INTEGER EXPRESSIONS ###########################
@@ -686,15 +794,20 @@ def p_intExpression(p):
 
 def p_intTerm(p):
   '''intTerm  : intTerm TkMult intElement
+              | intTerm TkMod intElement
               | intElement'''
   if (len(p) == 2) and p[1] != None:
     p[0] = p[1]
-  elif (len(p) == 3):
-    if p[2] != None:
-      element = p[2]
-      def multElement(term = term, element = element):
-        return term() * element()
-      p[0] = multElement
+  elif p[2] == "*" and p[1] != None and p[3] != None:
+    element = p[2]
+    def multElement(term = term, element = element):
+      return term() * element()
+    p[0] = multElement
+  elif p[1] != None and p[3] != None:
+    element = p[2]
+    def modElement(term = term, element = element):
+      return term() % element()
+    p[0] = multElement
 
 def p_intElement(p):
   '''intElement : intId
@@ -708,7 +821,7 @@ def p_intElement(p):
 
 def p_intId(p):
   # Verifica que un ID sea entero.
-  '''intId : TkId'''
+  '''intId : TkNId'''
 
   if ST.find("begin-task"):
     error = False
@@ -942,8 +1055,7 @@ def p_while(p):
 
 def p_beginInstruction(p):
   # Permite colocar bloques de instrucciones.
-  '''beginInstruction : TkBegin taskInstruction TkEnd TkSemiColon
-                      | TkBegin taskInstruction TkEnd
+  '''beginInstruction : TkBegin taskInstruction TkEnd 
                       | TkBegin TkEnd'''
 
   if ST.find("begin-task"):
@@ -1112,7 +1224,7 @@ def p_willyInstruction(p):
           elif orientation == "south": willy.look = "east"
           elif orientation == "east": willy.look = "north"
           elif orientation == "west": willy.look = "south"
-          world.printData()
+          scenario.printData()
       p[0] = turn
 
     elif p[1] == "turn-right":
@@ -1124,7 +1236,7 @@ def p_willyInstruction(p):
           elif orientation == "south": willy.look = "west"
           elif orientation == "east": willy.look = "south"
           elif orientation == "west": willy.look = "north"
-          world.printData()
+          scenario.printData()
       p[0] = turn
 
     elif p[1] == "take":
@@ -1189,7 +1301,7 @@ def p_willyInstruction(p):
             ST.terminate = True
 
           elif not (y == 0 and 3 <= x <= 18 and orientation == "north") and \
-            not (y == 21 and orientation == "south"):
+            not (y == 18 and orientation == "south"):
             contextErrors.append(
               ("Linea %d, columna %d:\tWilly debe estar en frente del estante o " +\
                 "de la zona de descarga para poder soltar un bloque.") % \
@@ -1205,12 +1317,38 @@ def p_willyInstruction(p):
                 (errX, errY)
               )
               ST.terminate = True
+            elif x%3 == 0:
+              contextErrors.append(
+                ("Linea %d, columna %d:\tNo se puede colocar un bloque en el " +\
+                  "borde entre dos zonas de descarga") % \
+                (errX, errY)
+              )
+              ST.terminate = True
             else:
-              scenario.unRegions[int(x/3)].append(willy.block)
+              scenario.unRegions[int(x/3)] += 1
               willy.block = None
 
           else:
-            scenario.shelves[willy.level][int(x/3)-1].append(willy.block)
+            block = willy.block
+            if block[0] == "B": num = int(block[1:])
+            else: num = int(block)
+            
+            if x%3 == 0:
+              contextErrors.append(
+                ("Linea %d, columna %d:\tNo se puede colocar un bloque en el " +\
+                  "borde entre casillas") % \
+                (errX, errY)
+              )
+              ST.terminate = True
+            if num != 5*willy.level + int(x/3):
+              contextErrors.append(
+                ("Linea %d, columna %d:\tSe coloco un bloque de numero " +\
+                  "%d en la casilla de numero %d") % \
+                (errX, errY, num, 5*willy.level + int(x/3))
+              )
+              ST.terminate = True
+
+            scenario.shelves[willy.level][int(x/3)-1] += 1
             willy.block = None
       p[0] = drop
 
@@ -1280,8 +1418,8 @@ def p_ignore(p):
 
 def p_error(p):
   """ Token de error. """
-  pos = getPosition(p.lexpos, tokensList)
-  if pos != None:
+  if p != None:
+    pos = getPosition(p.lexpos, tokensList)
     syntax.append(
       "Linea %d, columna %d:\tError de sintaxis." % (pos[0], pos[1]) + "\n" +
       "\t> " + getLine(text, p.lexpos) + "\n"
@@ -1289,6 +1427,11 @@ def p_error(p):
     )
     p.lexer.skip(1)
     
+    syntax[0] = False
+  else:
+    syntax.append(
+      "Error de sintaxis."
+    )
     syntax[0] = False
 
 

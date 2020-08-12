@@ -43,6 +43,7 @@ reserved = {
   "or": "TkOr",
   "not": "TkNot",
   "terminate": "TkTerminate",
+  "at": "TkAt",
 }
 
 # Lista de tokens
@@ -69,6 +70,7 @@ tokens = [
   "TkPlus",
   "TkMinus",
   "TkMult",
+  "TkMod",
   "TkEquiv",
   "TkLessT",
   "TkLessEq",
@@ -83,6 +85,7 @@ tokens = [
   "TkNum",
   "TkBNum",
   "TkId",
+  "TkNId",
 
   # Comentarios
   "TkLineComment",
@@ -94,7 +97,7 @@ def t_TkLastIdBlockIs(t):
   r'last identified block is'
   return t
 def t_TkStartAt(t):
-  r'Start at'
+  r'Start(\s)+at'
   return t
 def t_TkBeginScenario(t):
   r'begin-scenario'
@@ -136,6 +139,7 @@ t_TkEqual = r'\='
 t_TkPlus = r'\+'
 t_TkMinus = r'\-'
 t_TkMult = r'\*'
+t_TkMod = r'\%'
 t_TkEquiv = r'\=\='
 t_TkLessT = r'\<'
 t_TkLessEq = r'\<\='
@@ -166,12 +170,15 @@ def t_TkNum(t):
   return t
 def t_TkBNum(t):
   r'B\d+'
-  t.value = int(t.value[1:])
   return t
 def t_TkId(t):
   r'[a-zA-Z_][a-zA-Z0-9_]*'
   t.type = reserved.get(t.value, 'TkId')    # Check for reserved words
   return t
+def t_TkNId(t):
+  r'0[a-zA-Z_][a-zA-Z0-9_]*'
+  return t
+
 
 # Tokens de error
 def t_error(t):
