@@ -6,7 +6,7 @@ begin-scenario
     Start at 1 1 heading south;
     bool FALSE = False;
     bool TRUE = True;
-    int #zero = 0;
+    int #zero = 1;
 
     -- BLOCKS
     -- Left 0,0
@@ -42,7 +42,10 @@ begin-scenario
 end-scenario
 
 begin-task
-    turn-right;
-    move;
+    #zero = (1 * (0 + 54) % 13) * 0 + 8
+    TRUE = False or #zero > 1;
+    FALSE = True;
+
+    if TRUE and (FALSE or #zero == 8) then move;
 end-task
 

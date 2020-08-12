@@ -491,7 +491,7 @@ def p_boolean(p):
 def p_integer(p):
   # Permite definir una variable entera
   '''integer : TkInteger TkNId TkEqual TkNum TkSemiColon'''
-  
+
   if ST.find("begin-scenario"):
     # Si ya se definio el ID indicado, error.
     if ST.findNotGlobal(p[2]):
@@ -514,17 +514,17 @@ def p_boolExpression(p):
                     | boolExpression TkNotEqual boolTerm
                     | boolTerm
   '''
-  if (len(p) == 2) and (p[1] != None):
+  if (len(p) == 2):
     p[0] = p[1]
   elif len(p) == 4:
-    if (p[2] == "==") and (p[1] != None) and (p[3] != None):
+    if (p[2] == "=="):
       expression = p[1]
       term = p[3]
       def equivTerm(expression = expression, term = term):
         return expression() == term()
       p[0] = equivTerm
 
-    elif (p[2] == "!=") and (p[1] != None) and (p[3] != None):
+    elif (p[2] == "!="):
       expression = p[1]
       term = p[3]
       def equivTerm(expression = expression, term = term):
@@ -535,17 +535,17 @@ def p_boolTerm(p):
   '''boolTerm : boolTerm TkAnd boolFactor
               | boolTerm TkOr boolFactor
               | boolFactor'''
-  if (len(p) == 2) and (p[1] != None):
+  if (len(p) == 2):
     p[0] = p[1]
   elif len(p) == 4:
-    if (p[2] == "and") and (p[1] != None) and (p[3] != None):
+    if (p[2] == "and"):
       term = p[1]
       factor = p[3]
       def andFactor(term = term, factor = factor):
         return factor() and term()
       p[0] = andFactor
 
-    elif (p[2] == "or") and (p[1] != None) and (p[3] != None):
+    elif (p[2] == "or"):
       term = p[1]
       factor = p[3]
       def orFactor(term = term, factor = factor):
@@ -555,14 +555,13 @@ def p_boolTerm(p):
 def p_boolFactor(p):
   '''boolFactor : TkNot boolElement
                 | boolElement'''
-  if (len(p) == 2) and p[1] != None:
+  if (len(p) == 2):
     p[0] = p[1]
   elif (len(p) == 3):
-    if p[2] != None:
-      factor = p[2]
-      def notFactor(factor = factor):
-        return not factor()
-      p[0] = notFactor
+    factor = p[2]
+    def notFactor(factor = factor):
+      return not factor()
+    p[0] = notFactor
 
 def p_boolElement(p):
   '''boolElement  : boolId
@@ -573,11 +572,10 @@ def p_boolElement(p):
                   | idBlockIs
                   | boolIntExpression
                   | TkOpenParent boolExpression TkCloseParent'''
-  if (len(p) == 2) and p[1] != None:
+  if (len(p) == 2):
     p[0] = p[1]
-  elif (len(p) == 4):
-    if p[2] != None:
-      p[0] = p[2]
+  else:
+    p[0] = p[2]
 
 def p_boolConstant(p):
   '''boolC  : TkTrue
@@ -726,47 +724,47 @@ def p_boolIntExpression(p):
                         | intExpression TkGreatT intExpression
                         | intExpression TkGreatEq intExpression'''
 
-  if (p[3] == "==") and (p[1] != None) and (p[3] != None):
+  if (p[2] == "=="):
     expression = p[1]
     term = p[3]
     def equivTerm(expression = expression, term = term):
       return expression() == term()
     p[0] = equivTerm
 
-  elif (p[2] == "!=") and (p[1] != None) and (p[3] != None):
+  elif (p[2] == "!="):
     expression = p[1]
     term = p[3]
-    def equivTerm(expression = expression, term = term):
+    def notEqualTerm(expression = expression, term = term):
       return expression() != term()
-    p[0] = equivTerm
+    p[0] = notEqualTerm
 
-  elif (p[2] == "<") and (p[1] != None) and (p[3] != None):
+  elif (p[2] == "<"):
     expression = p[1]
     term = p[3]
-    def equivTerm(expression = expression, term = term):
+    def lessThanTerm(expression = expression, term = term):
       return expression() < term()
-    p[0] = equivTerm
+    p[0] = lessThanTerm
 
-  elif (p[2] == "<=") and (p[1] != None) and (p[3] != None):
+  elif (p[2] == "<="):
     expression = p[1]
     term = p[3]
-    def equivTerm(expression = expression, term = term):
+    def lessEqualTerm(expression = expression, term = term):
       return expression() <= term()
-    p[0] = equivTerm
+    p[0] = lessEqualTerm
   
-  elif (p[2] == ">") and (p[1] != None) and (p[3] != None):
+  elif (p[2] == ">"):
     expression = p[1]
     term = p[3]
-    def equivTerm(expression = expression, term = term):
+    def greatThanTerm(expression = expression, term = term):
       return expression() > term()
-    p[0] = equivTerm
+    p[0] = greatThanTerm
 
-  elif (p[2] == ">=") and (p[1] != None) and (p[3] != None):
+  else:
     expression = p[1]
     term = p[3]
-    def equivTerm(expression = expression, term = term):
+    def greatEqualTerm(expression = expression, term = term):
       return expression() >= term()
-    p[0] = equivTerm
+    p[0] = greatEqualTerm
 
 
 ########################### INTEGER EXPRESSIONS ###########################
@@ -775,49 +773,52 @@ def p_intExpression(p):
                     | intExpression TkMinus intTerm
                     | intTerm
   '''
-  if (len(p) == 2) and (p[1] != None):
+  if (len(p) == 2):
     p[0] = p[1]
   elif len(p) == 4:
-    if (p[2] == "+") and (p[1] != None) and (p[3] != None):
+    if (p[2] == "+"):
       expression = p[1]
       term = p[3]
-      def equivTerm(expression = expression, term = term):
+      def plusTerm(expression = expression, term = term):
         return expression() + term()
-      p[0] = equivTerm
+      p[0] = plusTerm
 
-    elif (p[2] == "-") and (p[1] != None) and (p[3] != None):
+    elif (p[2] == "-"):
       expression = p[1]
       term = p[3]
-      def equivTerm(expression = expression, term = term):
+      def minusTerm(expression = expression, term = term):
         return expression() - term()
-      p[0] = equivTerm
+      p[0] = minusTerm
 
 def p_intTerm(p):
   '''intTerm  : intTerm TkMult intElement
               | intTerm TkMod intElement
               | intElement'''
-  if (len(p) == 2) and p[1] != None:
+  if (len(p) == 2):
     p[0] = p[1]
-  elif p[2] == "*" and p[1] != None and p[3] != None:
-    element = p[2]
+
+  elif (len(p) == 4) and p[2] == "*":
+    term = p[1]
+    element = p[3]
     def multElement(term = term, element = element):
       return term() * element()
     p[0] = multElement
-  elif p[1] != None and p[3] != None:
-    element = p[2]
+
+  elif (len(p) == 4):
+    term = p[1]
+    element = p[3]
     def modElement(term = term, element = element):
       return term() % element()
-    p[0] = multElement
+    p[0] = modElement
 
 def p_intElement(p):
   '''intElement : intId
                 | intConst
                 | TkOpenParent intExpression TkCloseParent'''
-  if (len(p) == 2) and p[1] != None:
+  if (len(p) == 2):
     p[0] = p[1]
   elif (len(p) == 4):
-    if p[2] != None:
-      p[0] = p[2]
+    p[0] = p[2]
 
 def p_intId(p):
   # Verifica que un ID sea entero.
@@ -978,11 +979,11 @@ def p_assignBool(p):
     if not error:
       var = ST.find(p[1])
       def assingBoolean(var = var, expression = p[3]):
-        var.value = expression()
+        var.data = expression()
       p[0] = assingBoolean
 
 def p_assignInt(p):
-  '''assignInt : TkId TkEqual intExpression'''
+  '''assignInt : TkNId TkEqual intExpression'''
   if ST.find("begin-task"):
     error = False
 
@@ -1006,8 +1007,8 @@ def p_assignInt(p):
 
     if not error:
       var = ST.find(p[1])
-      def assingInt(var = var, expression = p[3]):
-        var.value = expression()
+      def assingInt(var = var, expression = p[3]):\
+        var.data = expression()
       p[0] = assingInt
 
 # BLOCKS
