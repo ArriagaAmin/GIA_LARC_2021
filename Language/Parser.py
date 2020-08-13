@@ -589,33 +589,38 @@ def p_boolConstant(p):
   p[0] = const
 
 def p_detectLeft(p):
-  '''detectLeft : TkDetectL'''
+  '''detectLeft : TkDetectL TkNum'''
   scenario = ST.find("begin-task").scenario
   def detect(scenario = scenario):
     if not ST.terminate:
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
+      dist = p[2]
 
       if orientation == "north":
         if x == 0: return False
-        elif scenarioMap[y][x-1] == []: return False
-        else: return True
+        for i in range(x-1, max(0, x-dist)-1, -1):
+          if len(scenarioMap[y][i]) > 0: return True
+        return False
 
       elif orientation == "south":
         if x == len(scenarioMap[0])-1: return False
-        elif scenarioMap[y][x+1] == []: return False
-        else: return True
+        for i in range(x+1, min(len(scenarioMap[0]), x+dist+1)):
+          if len(scenarioMap[y][i]) > 0: return True
+        return False
 
       elif orientation == "west":
         if y == len(scenarioMap): return False
-        elif scenarioMap[y+1][x] == []: return False
-        else: return True
+        for i in range(y+1, min(len(scenarioMap), y+dist+1)):
+          if len(scenarioMap[i][x]) > 0: return True
+        return False
 
       elif orientation == "east":
         if y == 0: return False
-        elif scenarioMap[y-1][x] == []: return False
-        else: return True
+        for i in range(y-1, max(0, y-dist)-1, -1):
+          if len(scenarioMap[i][x]) > 0: return True
+        return False
   p[0] = detect
 
 def p_detectRight(p):
@@ -626,26 +631,31 @@ def p_detectRight(p):
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
+      dist = p[2]
 
       if orientation == "south":
         if x == 0: return False
-        elif scenarioMap[y][x-1] == []: return False
-        else: return True
+        for i in range(x-1, max(0, x-dist)-1, -1):
+          if len(scenarioMap[y][i]) > 0: return True
+        return False
 
       elif orientation == "north":
         if x == len(scenarioMap[0])-1: return False
-        elif scenarioMap[y][x+1] == []: return False
-        else: return True
+        for i in range(x+1, min(len(scenarioMap[0]), x+dist+1)):
+          if len(scenarioMap[y][i]) > 0: return True
+        return False
 
       elif orientation == "east":
         if y == len(scenarioMap): return False
-        elif scenarioMap[y+1][x] == []: return False
-        else: return True
+        for i in range(y+1, min(len(scenarioMap), y+dist+1)):
+          if len(scenarioMap[i][x]) > 0: return True
+        return False
 
       elif orientation == "west":
         if y == 0: return False
-        elif scenarioMap[y-1][x] == []: return False
-        else: return True
+        for i in range(y-1, max(0, y-dist)-1, -1):
+          if len(scenarioMap[i][x]) > 0: return True
+        return False
   p[0] = detect
 
 def p_detectFront(p):
@@ -656,26 +666,31 @@ def p_detectFront(p):
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
+      dist = p[2]
 
       if orientation == "west":
         if x == 0: return False
-        elif scenarioMap[y][x-1] == []: return False
-        else: return True
+        for i in range(x-1, max(0, x-dist)-1, -1):
+          if len(scenarioMap[y][i]) > 0: return True
+        return False
 
       elif orientation == "east":
         if x == len(scenarioMap[0])-1: return False
-        elif scenarioMap[y][x+1] == []: return False
-        else: return True
+        for i in range(x+1, min(len(scenarioMap[0]), x+dist+1)):
+          if len(scenarioMap[y][i]) > 0: return True
+        return False
 
       elif orientation == "south":
-        if y == len(scenarioMap)-1: return False
-        elif scenarioMap[y+1][x] == []: return False
-        else: return True
+        if y == len(scenarioMap): return False
+        for i in range(y+1, min(len(scenarioMap), y+dist+1)):
+          if len(scenarioMap[i][x]) > 0: return True
+        return False
 
       elif orientation == "north":
         if y == 0: return False
-        elif scenarioMap[y-1][x] == []: return False
-        else: return True
+        for i in range(y-1, max(0, y-dist)-1, -1):
+          if len(scenarioMap[i][x]) > 0: return True
+        return False
   p[0] = detect
 
 def p_detectLine(p):
