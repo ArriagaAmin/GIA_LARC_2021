@@ -591,12 +591,11 @@ def p_boolConstant(p):
 def p_detectLeft(p):
   '''detectLeft : TkDetectL TkNum'''
   scenario = ST.find("begin-task").scenario
-  def detect(scenario = scenario):
+  def detect(scenario = scenario, dist = p[2]):
     if not ST.terminate:
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
-      dist = p[2]
 
       if orientation == "north":
         if x == 0: return False
@@ -624,14 +623,13 @@ def p_detectLeft(p):
   p[0] = detect
 
 def p_detectRight(p):
-  '''detectRight : TkDetectR'''
+  '''detectRight : TkDetectR TkNum'''
   scenario = ST.find("begin-task").scenario
-  def detect(scenario = scenario):
+  def detect(scenario = scenario, dist = p[2]):
     if not ST.terminate:
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
-      dist = p[2]
 
       if orientation == "south":
         if x == 0: return False
@@ -659,14 +657,13 @@ def p_detectRight(p):
   p[0] = detect
 
 def p_detectFront(p):
-  '''detectFront : TkDetectF'''
+  '''detectFront : TkDetectF TkNum'''
   scenario = ST.find("begin-task").scenario
-  def detect(scenario = scenario):
+  def detect(scenario = scenario, dist = p[2]):
     if not ST.terminate:
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
-      dist = p[2]
 
       if orientation == "west":
         if x == 0: return False
@@ -1071,15 +1068,15 @@ def p_if(p):
     
 def p_repeat(p):
   # Define el ciclo repeat.
-  '''repeat : TkRepeat TkNum TkTimes instruction'''
+  '''repeat : TkRepeat intExpression TkTimes instruction'''
   
   if ST.find("begin-task"):
     # Obtenemos la identacion correcta.
-    num = int(p[2])
+    num = p[2]
     func = p[4]
     def repeat(num = num, func = func):
       if not ST.terminate:
-        for i in range(num): func()
+        for i in range(num()): func()
     p[0] = repeat
 
 def p_while(p):
@@ -1142,13 +1139,9 @@ def p_startDefine(p):
 
     if not error:
       # Creamos una nueva variable del tipo Instruction y actualizamos sus datos.
-      newInstruction = Variable("define", "define", "", "Instructions")
+      newInstruction = Variable("define", "define", "")
       newInstruction.scopeId = ST.scopeId
       newInstruction.name = p[2]
-      newInstruction.declarationBlock = ST.declarationBlock
-
-      # Actualizamos el scopeId/declarationBlock.
-      ST.declarationBlock = ST.scopeId
       ST.scopeId += 1
 
       # Insertamos la instruction a la tabla de simbolos.
@@ -1159,7 +1152,7 @@ def p_startDefine(p):
 
       # Insertamos una variable falsa para que esta instruccion pueda ser llamada
       # desde dentro de su definicion
-      foo = Variable(p[2], "define", skip, "Instructions")
+      foo = Variable(p[2], "define", skip)
       foo.id = foo.name
       foo.scopeId = ST.scopeId-1
       ST.insert(foo)
@@ -1178,9 +1171,6 @@ def p_instDefine(p):
     newInstruction = ST.findNotGlobal("define", level=ST.head)
     newInstruction.data = p[2]
     newInstruction.id = newInstruction.name
-
-    # Actualizamos el declarationBlock.
-    ST.declarationBlock = newInstruction.declarationBlock
 
 # BASIC INSTRUCTIONS
 def p_willyInstruction(p):

@@ -174,7 +174,7 @@ def t_TkBlockComment(t):
 
 # Definicion de los Tokens generales
 def t_TkNum(t):
-  r'\d+'
+  r'(\d+)|(-\d+)'
   t.value = int(t.value)
   return t
 def t_TkBNum(t):
