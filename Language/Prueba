@@ -46,6 +46,25 @@ begin-task
     TRUE = False or #zero > 1;
     FALSE = True;
 
-    if TRUE and (FALSE or #zero == 8) then move;
+    if TRUE and (FALSE and #zero == 3) then move;
+    else if #zero == 5 then turn-left;
+    else if #zero == 8 then level 2;
+    else terminate;
+
+    turn-left; 
+    repeat 5 times move;
+    turn-left;
+
+    while not detect-right do move;
+    turn-right;
+    identify;
+    level 0;
+    take;
+    turn-right;
+    repeat 7 times move;
+    turn-right;
+    repeat 4 times move;
+    turn-left;
+    drop;
 end-task
 

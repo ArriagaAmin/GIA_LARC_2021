@@ -44,6 +44,7 @@ reserved = {
   "not": "TkNot",
   "terminate": "TkTerminate",
   "at": "TkAt",
+  "identify": "TkIdentify",
 }
 
 # Lista de tokens
@@ -60,6 +61,8 @@ tokens = [
   "TkDetectL",
   "TkDetectR",
   "TkDetectF",
+  "TkDetectLine",
+  "TkDetectInters",
   "TkLastIdBlockIs",
 
   # Caracteres simples
@@ -129,6 +132,12 @@ def t_TkDetectR(t):
   return t
 def t_TkDetectF(t):
   r'detect-front'
+  return t
+def t_TkDetectLine(t):
+  r'detect-line'
+  return t
+def t_TkDetectInters(t):
+  r'detect-intersection'
   return t
 
 # Definicion de los Tokens caracteres simples

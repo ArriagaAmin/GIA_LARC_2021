@@ -227,7 +227,7 @@ class Scenario:
       elif i == 15: line += "    Orientation: " + self.willy.look
       elif i == 16: line += "    Block: " + str(self.willy.block)
       elif i == 17: line += "    Last identified block: " + str(self.willy.blockId)
-      elif i == 18: line += "    Level grua: " + str(self.willy.level)
+      elif i == 18: line += "    Grua level: " + str(self.willy.level)
       
       # Agregamos la linea al texto.
       text += line + "\n"
@@ -569,6 +569,8 @@ def p_boolElement(p):
                   | detectLeft
                   | detectRight
                   | detectFront
+                  | detectLine
+                  | detectInters
                   | idBlockIs
                   | boolIntExpression
                   | TkOpenParent boolExpression TkCloseParent'''
@@ -674,6 +676,28 @@ def p_detectFront(p):
         if y == 0: return False
         elif scenarioMap[y-1][x] == []: return False
         else: return True
+  p[0] = detect
+
+def p_detectLine(p):
+  '''detectLine : TkDetectLine'''
+  scenario = ST.find("begin-task").scenario
+  def detect(scenario = scenario):
+    if not ST.terminate:
+      willy = scenario.willy
+      x, y = willy.x, willy.y
+      if x%3 == 0 or y%3 == 0: return True
+      return False
+  p[0] = detect
+
+def p_detectInters(p):
+  '''detectInters : TkDetectInters'''
+  scenario = ST.find("begin-task").scenario
+  def detect(scenario = scenario):
+    if not ST.terminate:
+      willy = scenario.willy
+      x, y = willy.x, willy.y
+      if x%3 == 0 and y%3 == 0: return True
+      return False
   p[0] = detect
 
 def p_idBlockIs(p):
@@ -1152,6 +1176,7 @@ def p_willyInstruction(p):
                       | TkTake TkSemiColon
                       | TkDrop TkSemiColon
                       | TkLevel TkNum TkSemiColon
+                      | TkIdentify TkSemiColon
                       | TkTerminate TkSemiColon
                       | willyInstructionId TkSemiColon'''
   
@@ -1279,7 +1304,7 @@ def p_willyInstruction(p):
             )
             ST.terminate = True
           
-          if block:
+          if not block:
             contextErrors.append(
               ("Linea %d, columna %d:\tNo hay ningun bloque frente a Willy.") % \
               (errX, errY)
@@ -1310,7 +1335,7 @@ def p_willyInstruction(p):
             )
             ST.terminate = True
 
-          elif y == 21 and orientation == "south":
+          elif y == 18 and orientation == "south":
             if willy.level != 0:
               contextErrors.append(
                 ("Linea %d, columna %d:\tWilly debe tener la grua en el nivel " +\
@@ -1352,6 +1377,27 @@ def p_willyInstruction(p):
             scenario.shelves[willy.level][int(x/3)-1] += 1
             willy.block = None
       p[0] = drop
+      
+    elif p[1] == "identify":
+      def identify(scenario = scenario, errX = pos[0], errY = pos[1]):
+        willy = scenario.willy
+        scenarioMap = scenario.scenarioMap
+        x, y, orientation = willy.x, willy.y, willy.look
+
+        if not (orientation == "north" and y == 0) and\
+          not (orientation == "south" and y == len(scenarioMap)) and\
+          not (orientation == "east" and x == len(scenarioMap[0])) and\
+          not (orientation == "west" and x == 0):
+
+          if orientation == "north" and len(scenarioMap[y-1][x]) > 0:
+            willy.blockId = scenarioMap[y-1][x][0]
+          elif orientation == "south" and len(scenarioMap[y+1][x]) > 0:
+            willy.blockId = scenarioMap[y+1][x][0]
+          elif orientation == "east" and len(scenarioMap[y][x+1]) > 0:
+            willy.blockId = scenarioMap[y][x+1][0]
+          elif orientation == "west" and len(scenarioMap[y][x-1]) > 0:
+            willy.blockId = scenarioMap[y][x-1][0]
+      p[0] = identify
 
     elif p[1] == "terminate":
         p[0] = terminate

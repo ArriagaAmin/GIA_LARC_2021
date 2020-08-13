@@ -109,15 +109,16 @@ Rule 103   willyInstruction -> TkTurnR TkSemiColon
 Rule 104   willyInstruction -> TkTake TkSemiColon
 Rule 105   willyInstruction -> TkDrop TkSemiColon
 Rule 106   willyInstruction -> TkLevel TkNum TkSemiColon
-Rule 107   willyInstruction -> TkTerminate TkSemiColon
-Rule 108   willyInstruction -> willyInstructionId TkSemiColon
-Rule 109   willyInstructionId -> TkId
-Rule 110   empty -> <empty>
-Rule 111   ignore -> TkTab
-Rule 112   ignore -> TkNewLine
-Rule 113   ignore -> TkLineComment
-Rule 114   ignore -> TkBlockComment
-Rule 115   ignore -> TkSpace
+Rule 107   willyInstruction -> TkIdentify TkSemiColon
+Rule 108   willyInstruction -> TkTerminate TkSemiColon
+Rule 109   willyInstruction -> willyInstructionId TkSemiColon
+Rule 110   willyInstructionId -> TkId
+Rule 111   empty -> <empty>
+Rule 112   ignore -> TkTab
+Rule 113   ignore -> TkNewLine
+Rule 114   ignore -> TkLineComment
+Rule 115   ignore -> TkBlockComment
+Rule 116   ignore -> TkSpace
 
 Terminals, with rules where they appear
 
@@ -128,7 +129,7 @@ TkBNum               : 26 54
 TkBegin              : 96 97
 TkBeginScenario      : 5
 TkBeginTask          : 75
-TkBlockComment       : 114
+TkBlockComment       : 115
 TkBlue               : 22
 TkBoolean            : 29 30
 TkCloseParent        : 47 71
@@ -150,20 +151,21 @@ TkGreatEq            : 62
 TkGreatT             : 61
 TkGreen              : 23
 TkHeading            : 28
-TkId                 : 29 30 56 90 99 109
+TkId                 : 29 30 56 90 99 110
+TkIdentify           : 107
 TkIf                 : 92 93
 TkInteger            : 31
 TkLastIdBlockIs      : 53 54 55
 TkLessEq             : 60
 TkLessT              : 59
 TkLevel              : 106
-TkLineComment        : 113
+TkLineComment        : 114
 TkMinus              : 64
 TkMod                : 67
 TkMove               : 101
 TkMult               : 66
 TkNId                : 31 72 91
-TkNewLine            : 112
+TkNewLine            : 113
 TkNorth              : 17
 TkNot                : 38
 TkNotEqual           : 33 58
@@ -174,13 +176,13 @@ TkPlaceBlock         : 25 26 27
 TkPlus               : 63
 TkRed                : 21
 TkRepeat             : 94
-TkSemiColon          : 9 11 25 26 27 28 29 30 31 79 81 101 102 103 104 105 106 107 108
+TkSemiColon          : 9 11 25 26 27 28 29 30 31 79 81 101 102 103 104 105 106 107 108 109
 TkSouth              : 20
-TkSpace              : 115
+TkSpace              : 116
 TkStartAt            : 28
-TkTab                : 111
+TkTab                : 112
 TkTake               : 104
-TkTerminate          : 107
+TkTerminate          : 108
 TkThen               : 92 93
 TkTimes              : 94
 TkTrue               : 29 48
@@ -239,7 +241,7 @@ taskInstruction      : 76 78 79 96
 universo             : 0
 while                : 86
 willyInstruction     : 89
-willyInstructionId   : 108
+willyInstructionId   : 109
 
 Parsing method: LALR
 
@@ -250,15 +252,15 @@ state 0
     (2) universo -> . empty
     (3) universo -> . ignore
     (4) beginScenario -> . beginS endS
-    (110) empty -> .
-    (111) ignore -> . TkTab
-    (112) ignore -> . TkNewLine
-    (113) ignore -> . TkLineComment
-    (114) ignore -> . TkBlockComment
-    (115) ignore -> . TkSpace
+    (111) empty -> .
+    (112) ignore -> . TkTab
+    (113) ignore -> . TkNewLine
+    (114) ignore -> . TkLineComment
+    (115) ignore -> . TkBlockComment
+    (116) ignore -> . TkSpace
     (5) beginS -> . TkBeginScenario
 
-    $end            reduce using rule 110 (empty -> .)
+    $end            reduce using rule 111 (empty -> .)
     TkTab           shift and go to state 6
     TkNewLine       shift and go to state 7
     TkLineComment   shift and go to state 8
@@ -341,37 +343,37 @@ state 5
 
 state 6
 
-    (111) ignore -> TkTab .
+    (112) ignore -> TkTab .
 
-    $end            reduce using rule 111 (ignore -> TkTab .)
+    $end            reduce using rule 112 (ignore -> TkTab .)
 
 
 state 7
 
-    (112) ignore -> TkNewLine .
+    (113) ignore -> TkNewLine .
 
-    $end            reduce using rule 112 (ignore -> TkNewLine .)
+    $end            reduce using rule 113 (ignore -> TkNewLine .)
 
 
 state 8
 
-    (113) ignore -> TkLineComment .
+    (114) ignore -> TkLineComment .
 
-    $end            reduce using rule 113 (ignore -> TkLineComment .)
+    $end            reduce using rule 114 (ignore -> TkLineComment .)
 
 
 state 9
 
-    (114) ignore -> TkBlockComment .
+    (115) ignore -> TkBlockComment .
 
-    $end            reduce using rule 114 (ignore -> TkBlockComment .)
+    $end            reduce using rule 115 (ignore -> TkBlockComment .)
 
 
 state 10
 
-    (115) ignore -> TkSpace .
+    (116) ignore -> TkSpace .
 
-    $end            reduce using rule 115 (ignore -> TkSpace .)
+    $end            reduce using rule 116 (ignore -> TkSpace .)
 
 
 state 11
@@ -425,10 +427,11 @@ state 13
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
     TkEndTask       shift and go to state 30
     TkSemiColon     shift and go to state 32
@@ -444,8 +447,9 @@ state 13
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
     endT                           shift and go to state 28
     taskInstruction                shift and go to state 29
@@ -459,7 +463,7 @@ state 13
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
 state 14
 
@@ -479,6 +483,7 @@ state 14
     TkTake          reduce using rule 75 (beginT -> TkBeginTask .)
     TkDrop          reduce using rule 75 (beginT -> TkBeginTask .)
     TkLevel         reduce using rule 75 (beginT -> TkBeginTask .)
+    TkIdentify      reduce using rule 75 (beginT -> TkBeginTask .)
     TkTerminate     reduce using rule 75 (beginT -> TkBeginTask .)
     TkDefine        reduce using rule 75 (beginT -> TkBeginTask .)
 
@@ -507,14 +512,14 @@ state 16
     (30) boolean -> . TkBoolean TkId TkEqual TkFalse TkSemiColon
     (31) integer -> . TkInteger TkNId TkEqual TkNum TkSemiColon
 
-    TkEndScenario   shift and go to state 57
-    TkSemiColon     shift and go to state 59
+    TkEndScenario   shift and go to state 58
+    TkSemiColon     shift and go to state 60
     TkPlaceBlock    shift and go to state 24
     TkStartAt       shift and go to state 25
     TkBoolean       shift and go to state 26
     TkInteger       shift and go to state 27
 
-    scenarioInstruction            shift and go to state 58
+    scenarioInstruction            shift and go to state 59
     placeBlock                     shift and go to state 20
     startAt                        shift and go to state 21
     boolean                        shift and go to state 22
@@ -609,37 +614,37 @@ state 24
     (23) color -> . TkGreen
     (24) color -> . TkYellow
 
-    TkNum           shift and go to state 60
-    TkBNum          shift and go to state 61
-    TkRed           shift and go to state 63
-    TkBlue          shift and go to state 64
-    TkGreen         shift and go to state 65
-    TkYellow        shift and go to state 66
+    TkNum           shift and go to state 61
+    TkBNum          shift and go to state 62
+    TkRed           shift and go to state 64
+    TkBlue          shift and go to state 65
+    TkGreen         shift and go to state 66
+    TkYellow        shift and go to state 67
 
-    color                          shift and go to state 62
+    color                          shift and go to state 63
 
 state 25
 
     (28) startAt -> TkStartAt . position TkHeading orientation TkSemiColon
     (16) position -> . TkNum TkNum
 
-    TkNum           shift and go to state 68
+    TkNum           shift and go to state 69
 
-    position                       shift and go to state 67
+    position                       shift and go to state 68
 
 state 26
 
     (29) boolean -> TkBoolean . TkId TkEqual TkTrue TkSemiColon
     (30) boolean -> TkBoolean . TkId TkEqual TkFalse TkSemiColon
 
-    TkId            shift and go to state 69
+    TkId            shift and go to state 70
 
 
 state 27
 
     (31) integer -> TkInteger . TkNId TkEqual TkNum TkSemiColon
 
-    TkNId           shift and go to state 70
+    TkNId           shift and go to state 71
 
 
 state 28
@@ -677,13 +682,14 @@ state 29
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
-    TkEndTask       shift and go to state 71
-    TkSemiColon     shift and go to state 73
+    TkEndTask       shift and go to state 72
+    TkSemiColon     shift and go to state 74
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
     TkIf            shift and go to state 43
@@ -696,10 +702,11 @@ state 29
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    instruction                    shift and go to state 72
+    instruction                    shift and go to state 73
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
     if                             shift and go to state 35
@@ -709,7 +716,7 @@ state 29
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
 state 30
 
@@ -736,6 +743,7 @@ state 31
     TkTake          reduce using rule 80 (taskInstruction -> instruction .)
     TkDrop          reduce using rule 80 (taskInstruction -> instruction .)
     TkLevel         reduce using rule 80 (taskInstruction -> instruction .)
+    TkIdentify      reduce using rule 80 (taskInstruction -> instruction .)
     TkTerminate     reduce using rule 80 (taskInstruction -> instruction .)
     TkDefine        reduce using rule 80 (taskInstruction -> instruction .)
     TkEnd           reduce using rule 80 (taskInstruction -> instruction .)
@@ -759,6 +767,7 @@ state 32
     TkTake          reduce using rule 81 (taskInstruction -> TkSemiColon .)
     TkDrop          reduce using rule 81 (taskInstruction -> TkSemiColon .)
     TkLevel         reduce using rule 81 (taskInstruction -> TkSemiColon .)
+    TkIdentify      reduce using rule 81 (taskInstruction -> TkSemiColon .)
     TkTerminate     reduce using rule 81 (taskInstruction -> TkSemiColon .)
     TkDefine        reduce using rule 81 (taskInstruction -> TkSemiColon .)
     TkEnd           reduce using rule 81 (taskInstruction -> TkSemiColon .)
@@ -782,6 +791,7 @@ state 33
     TkTake          reduce using rule 82 (instruction -> assignBool .)
     TkDrop          reduce using rule 82 (instruction -> assignBool .)
     TkLevel         reduce using rule 82 (instruction -> assignBool .)
+    TkIdentify      reduce using rule 82 (instruction -> assignBool .)
     TkTerminate     reduce using rule 82 (instruction -> assignBool .)
     TkDefine        reduce using rule 82 (instruction -> assignBool .)
     TkEnd           reduce using rule 82 (instruction -> assignBool .)
@@ -806,6 +816,7 @@ state 34
     TkTake          reduce using rule 83 (instruction -> assignInt .)
     TkDrop          reduce using rule 83 (instruction -> assignInt .)
     TkLevel         reduce using rule 83 (instruction -> assignInt .)
+    TkIdentify      reduce using rule 83 (instruction -> assignInt .)
     TkTerminate     reduce using rule 83 (instruction -> assignInt .)
     TkDefine        reduce using rule 83 (instruction -> assignInt .)
     TkEnd           reduce using rule 83 (instruction -> assignInt .)
@@ -830,6 +841,7 @@ state 35
     TkTake          reduce using rule 84 (instruction -> if .)
     TkDrop          reduce using rule 84 (instruction -> if .)
     TkLevel         reduce using rule 84 (instruction -> if .)
+    TkIdentify      reduce using rule 84 (instruction -> if .)
     TkTerminate     reduce using rule 84 (instruction -> if .)
     TkDefine        reduce using rule 84 (instruction -> if .)
     TkEnd           reduce using rule 84 (instruction -> if .)
@@ -854,6 +866,7 @@ state 36
     TkTake          reduce using rule 85 (instruction -> repeat .)
     TkDrop          reduce using rule 85 (instruction -> repeat .)
     TkLevel         reduce using rule 85 (instruction -> repeat .)
+    TkIdentify      reduce using rule 85 (instruction -> repeat .)
     TkTerminate     reduce using rule 85 (instruction -> repeat .)
     TkDefine        reduce using rule 85 (instruction -> repeat .)
     TkEnd           reduce using rule 85 (instruction -> repeat .)
@@ -878,6 +891,7 @@ state 37
     TkTake          reduce using rule 86 (instruction -> while .)
     TkDrop          reduce using rule 86 (instruction -> while .)
     TkLevel         reduce using rule 86 (instruction -> while .)
+    TkIdentify      reduce using rule 86 (instruction -> while .)
     TkTerminate     reduce using rule 86 (instruction -> while .)
     TkDefine        reduce using rule 86 (instruction -> while .)
     TkEnd           reduce using rule 86 (instruction -> while .)
@@ -902,6 +916,7 @@ state 38
     TkTake          reduce using rule 87 (instruction -> beginInstruction .)
     TkDrop          reduce using rule 87 (instruction -> beginInstruction .)
     TkLevel         reduce using rule 87 (instruction -> beginInstruction .)
+    TkIdentify      reduce using rule 87 (instruction -> beginInstruction .)
     TkTerminate     reduce using rule 87 (instruction -> beginInstruction .)
     TkDefine        reduce using rule 87 (instruction -> beginInstruction .)
     TkEnd           reduce using rule 87 (instruction -> beginInstruction .)
@@ -926,6 +941,7 @@ state 39
     TkTake          reduce using rule 88 (instruction -> defineInstruction .)
     TkDrop          reduce using rule 88 (instruction -> defineInstruction .)
     TkLevel         reduce using rule 88 (instruction -> defineInstruction .)
+    TkIdentify      reduce using rule 88 (instruction -> defineInstruction .)
     TkTerminate     reduce using rule 88 (instruction -> defineInstruction .)
     TkDefine        reduce using rule 88 (instruction -> defineInstruction .)
     TkEnd           reduce using rule 88 (instruction -> defineInstruction .)
@@ -950,6 +966,7 @@ state 40
     TkTake          reduce using rule 89 (instruction -> willyInstruction .)
     TkDrop          reduce using rule 89 (instruction -> willyInstruction .)
     TkLevel         reduce using rule 89 (instruction -> willyInstruction .)
+    TkIdentify      reduce using rule 89 (instruction -> willyInstruction .)
     TkTerminate     reduce using rule 89 (instruction -> willyInstruction .)
     TkDefine        reduce using rule 89 (instruction -> willyInstruction .)
     TkEnd           reduce using rule 89 (instruction -> willyInstruction .)
@@ -959,17 +976,17 @@ state 40
 state 41
 
     (90) assignBool -> TkId . TkEqual boolExpression
-    (109) willyInstructionId -> TkId .
+    (110) willyInstructionId -> TkId .
 
-    TkEqual         shift and go to state 74
-    TkSemiColon     reduce using rule 109 (willyInstructionId -> TkId .)
+    TkEqual         shift and go to state 75
+    TkSemiColon     reduce using rule 110 (willyInstructionId -> TkId .)
 
 
 state 42
 
     (91) assignInt -> TkNId . TkEqual intExpression
 
-    TkEqual         shift and go to state 75
+    TkEqual         shift and go to state 76
 
 
 state 43
@@ -1019,40 +1036,40 @@ state 43
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolExpression                 shift and go to state 76
-    boolTerm                       shift and go to state 77
-    boolFactor                     shift and go to state 78
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolExpression                 shift and go to state 77
+    boolTerm                       shift and go to state 78
+    boolFactor                     shift and go to state 79
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
 state 44
 
     (94) repeat -> TkRepeat . TkNum TkTimes instruction
 
-    TkNum           shift and go to state 103
+    TkNum           shift and go to state 104
 
 
 state 45
@@ -1101,34 +1118,34 @@ state 45
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolExpression                 shift and go to state 104
-    boolTerm                       shift and go to state 77
-    boolFactor                     shift and go to state 78
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolExpression                 shift and go to state 105
+    boolTerm                       shift and go to state 78
+    boolFactor                     shift and go to state 79
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
 state 46
 
@@ -1161,12 +1178,13 @@ state 46
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
-    TkEnd           shift and go to state 106
+    TkEnd           shift and go to state 107
     TkSemiColon     shift and go to state 32
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
@@ -1180,10 +1198,11 @@ state 46
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    taskInstruction                shift and go to state 105
+    taskInstruction                shift and go to state 106
     instruction                    shift and go to state 31
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
@@ -1194,88 +1213,95 @@ state 46
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
 state 47
 
     (98) defineInstruction -> startDefine . instDefine
     (100) instDefine -> . TkAs instruction
 
-    TkAs            shift and go to state 108
+    TkAs            shift and go to state 109
 
-    instDefine                     shift and go to state 107
+    instDefine                     shift and go to state 108
 
 state 48
 
     (101) willyInstruction -> TkMove . TkSemiColon
 
-    TkSemiColon     shift and go to state 109
+    TkSemiColon     shift and go to state 110
 
 
 state 49
 
     (102) willyInstruction -> TkTurnL . TkSemiColon
 
-    TkSemiColon     shift and go to state 110
+    TkSemiColon     shift and go to state 111
 
 
 state 50
 
     (103) willyInstruction -> TkTurnR . TkSemiColon
 
-    TkSemiColon     shift and go to state 111
+    TkSemiColon     shift and go to state 112
 
 
 state 51
 
     (104) willyInstruction -> TkTake . TkSemiColon
 
-    TkSemiColon     shift and go to state 112
+    TkSemiColon     shift and go to state 113
 
 
 state 52
 
     (105) willyInstruction -> TkDrop . TkSemiColon
 
-    TkSemiColon     shift and go to state 113
+    TkSemiColon     shift and go to state 114
 
 
 state 53
 
     (106) willyInstruction -> TkLevel . TkNum TkSemiColon
 
-    TkNum           shift and go to state 114
+    TkNum           shift and go to state 115
 
 
 state 54
 
-    (107) willyInstruction -> TkTerminate . TkSemiColon
-
-    TkSemiColon     shift and go to state 115
-
-
-state 55
-
-    (108) willyInstruction -> willyInstructionId . TkSemiColon
+    (107) willyInstruction -> TkIdentify . TkSemiColon
 
     TkSemiColon     shift and go to state 116
 
 
+state 55
+
+    (108) willyInstruction -> TkTerminate . TkSemiColon
+
+    TkSemiColon     shift and go to state 117
+
+
 state 56
 
-    (99) startDefine -> TkDefine . TkId
+    (109) willyInstruction -> willyInstructionId . TkSemiColon
 
-    TkId            shift and go to state 117
+    TkSemiColon     shift and go to state 118
 
 
 state 57
+
+    (99) startDefine -> TkDefine . TkId
+
+    TkId            shift and go to state 119
+
+
+state 58
 
     (6) endS -> scenarioInstructions TkEndScenario .
 
     TkBeginTask     reduce using rule 6 (endS -> scenarioInstructions TkEndScenario .)
 
 
-state 58
+state 59
 
     (8) scenarioInstructions -> scenarioInstructions scenarioInstruction .
 
@@ -1287,7 +1313,7 @@ state 58
     TkInteger       reduce using rule 8 (scenarioInstructions -> scenarioInstructions scenarioInstruction .)
 
 
-state 59
+state 60
 
     (9) scenarioInstructions -> scenarioInstructions TkSemiColon .
 
@@ -1299,28 +1325,28 @@ state 59
     TkInteger       reduce using rule 9 (scenarioInstructions -> scenarioInstructions TkSemiColon .)
 
 
-state 60
-
-    (25) placeBlock -> TkPlaceBlock TkNum . TkAt position TkSemiColon
-
-    TkAt            shift and go to state 118
-
-
 state 61
 
-    (26) placeBlock -> TkPlaceBlock TkBNum . TkAt position TkSemiColon
-
-    TkAt            shift and go to state 119
-
-
-state 62
-
-    (27) placeBlock -> TkPlaceBlock color . TkAt position TkSemiColon
+    (25) placeBlock -> TkPlaceBlock TkNum . TkAt position TkSemiColon
 
     TkAt            shift and go to state 120
 
 
+state 62
+
+    (26) placeBlock -> TkPlaceBlock TkBNum . TkAt position TkSemiColon
+
+    TkAt            shift and go to state 121
+
+
 state 63
+
+    (27) placeBlock -> TkPlaceBlock color . TkAt position TkSemiColon
+
+    TkAt            shift and go to state 122
+
+
+state 64
 
     (21) color -> TkRed .
 
@@ -1345,6 +1371,7 @@ state 63
     TkTake          reduce using rule 21 (color -> TkRed .)
     TkDrop          reduce using rule 21 (color -> TkRed .)
     TkLevel         reduce using rule 21 (color -> TkRed .)
+    TkIdentify      reduce using rule 21 (color -> TkRed .)
     TkTerminate     reduce using rule 21 (color -> TkRed .)
     TkDefine        reduce using rule 21 (color -> TkRed .)
     TkEnd           reduce using rule 21 (color -> TkRed .)
@@ -1352,7 +1379,7 @@ state 63
     TkCloseParent   reduce using rule 21 (color -> TkRed .)
 
 
-state 64
+state 65
 
     (22) color -> TkBlue .
 
@@ -1377,6 +1404,7 @@ state 64
     TkTake          reduce using rule 22 (color -> TkBlue .)
     TkDrop          reduce using rule 22 (color -> TkBlue .)
     TkLevel         reduce using rule 22 (color -> TkBlue .)
+    TkIdentify      reduce using rule 22 (color -> TkBlue .)
     TkTerminate     reduce using rule 22 (color -> TkBlue .)
     TkDefine        reduce using rule 22 (color -> TkBlue .)
     TkEnd           reduce using rule 22 (color -> TkBlue .)
@@ -1384,7 +1412,7 @@ state 64
     TkCloseParent   reduce using rule 22 (color -> TkBlue .)
 
 
-state 65
+state 66
 
     (23) color -> TkGreen .
 
@@ -1409,6 +1437,7 @@ state 65
     TkTake          reduce using rule 23 (color -> TkGreen .)
     TkDrop          reduce using rule 23 (color -> TkGreen .)
     TkLevel         reduce using rule 23 (color -> TkGreen .)
+    TkIdentify      reduce using rule 23 (color -> TkGreen .)
     TkTerminate     reduce using rule 23 (color -> TkGreen .)
     TkDefine        reduce using rule 23 (color -> TkGreen .)
     TkEnd           reduce using rule 23 (color -> TkGreen .)
@@ -1416,7 +1445,7 @@ state 65
     TkCloseParent   reduce using rule 23 (color -> TkGreen .)
 
 
-state 66
+state 67
 
     (24) color -> TkYellow .
 
@@ -1441,6 +1470,7 @@ state 66
     TkTake          reduce using rule 24 (color -> TkYellow .)
     TkDrop          reduce using rule 24 (color -> TkYellow .)
     TkLevel         reduce using rule 24 (color -> TkYellow .)
+    TkIdentify      reduce using rule 24 (color -> TkYellow .)
     TkTerminate     reduce using rule 24 (color -> TkYellow .)
     TkDefine        reduce using rule 24 (color -> TkYellow .)
     TkEnd           reduce using rule 24 (color -> TkYellow .)
@@ -1448,43 +1478,43 @@ state 66
     TkCloseParent   reduce using rule 24 (color -> TkYellow .)
 
 
-state 67
+state 68
 
     (28) startAt -> TkStartAt position . TkHeading orientation TkSemiColon
 
-    TkHeading       shift and go to state 121
-
-
-state 68
-
-    (16) position -> TkNum . TkNum
-
-    TkNum           shift and go to state 122
+    TkHeading       shift and go to state 123
 
 
 state 69
 
-    (29) boolean -> TkBoolean TkId . TkEqual TkTrue TkSemiColon
-    (30) boolean -> TkBoolean TkId . TkEqual TkFalse TkSemiColon
+    (16) position -> TkNum . TkNum
 
-    TkEqual         shift and go to state 123
+    TkNum           shift and go to state 124
 
 
 state 70
 
-    (31) integer -> TkInteger TkNId . TkEqual TkNum TkSemiColon
+    (29) boolean -> TkBoolean TkId . TkEqual TkTrue TkSemiColon
+    (30) boolean -> TkBoolean TkId . TkEqual TkFalse TkSemiColon
 
-    TkEqual         shift and go to state 124
+    TkEqual         shift and go to state 125
 
 
 state 71
+
+    (31) integer -> TkInteger TkNId . TkEqual TkNum TkSemiColon
+
+    TkEqual         shift and go to state 126
+
+
+state 72
 
     (76) endT -> taskInstruction TkEndTask .
 
     $end            reduce using rule 76 (endT -> taskInstruction TkEndTask .)
 
 
-state 72
+state 73
 
     (78) taskInstruction -> taskInstruction instruction .
 
@@ -1502,12 +1532,13 @@ state 72
     TkTake          reduce using rule 78 (taskInstruction -> taskInstruction instruction .)
     TkDrop          reduce using rule 78 (taskInstruction -> taskInstruction instruction .)
     TkLevel         reduce using rule 78 (taskInstruction -> taskInstruction instruction .)
+    TkIdentify      reduce using rule 78 (taskInstruction -> taskInstruction instruction .)
     TkTerminate     reduce using rule 78 (taskInstruction -> taskInstruction instruction .)
     TkDefine        reduce using rule 78 (taskInstruction -> taskInstruction instruction .)
     TkEnd           reduce using rule 78 (taskInstruction -> taskInstruction instruction .)
 
 
-state 73
+state 74
 
     (79) taskInstruction -> taskInstruction TkSemiColon .
 
@@ -1525,12 +1556,13 @@ state 73
     TkTake          reduce using rule 79 (taskInstruction -> taskInstruction TkSemiColon .)
     TkDrop          reduce using rule 79 (taskInstruction -> taskInstruction TkSemiColon .)
     TkLevel         reduce using rule 79 (taskInstruction -> taskInstruction TkSemiColon .)
+    TkIdentify      reduce using rule 79 (taskInstruction -> taskInstruction TkSemiColon .)
     TkTerminate     reduce using rule 79 (taskInstruction -> taskInstruction TkSemiColon .)
     TkDefine        reduce using rule 79 (taskInstruction -> taskInstruction TkSemiColon .)
     TkEnd           reduce using rule 79 (taskInstruction -> taskInstruction TkSemiColon .)
 
 
-state 74
+state 75
 
     (90) assignBool -> TkId TkEqual . boolExpression
     (32) boolExpression -> . boolExpression TkEquiv boolTerm
@@ -1576,36 +1608,36 @@ state 74
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolExpression                 shift and go to state 125
-    boolTerm                       shift and go to state 77
-    boolFactor                     shift and go to state 78
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolExpression                 shift and go to state 127
+    boolTerm                       shift and go to state 78
+    boolFactor                     shift and go to state 79
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 75
+state 76
 
     (91) assignInt -> TkNId TkEqual . intExpression
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -1620,29 +1652,29 @@ state 75
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 126
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 128
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 76
+state 77
 
     (92) if -> TkIf boolExpression . TkThen instruction
     (93) if -> TkIf boolExpression . TkThen instruction TkElse instruction
     (32) boolExpression -> boolExpression . TkEquiv boolTerm
     (33) boolExpression -> boolExpression . TkNotEqual boolTerm
 
-    TkThen          shift and go to state 128
-    TkEquiv         shift and go to state 129
-    TkNotEqual      shift and go to state 130
+    TkThen          shift and go to state 130
+    TkEquiv         shift and go to state 131
+    TkNotEqual      shift and go to state 132
 
 
-state 77
+state 78
 
     (34) boolExpression -> boolTerm .
     (35) boolTerm -> boolTerm . TkAnd boolFactor
@@ -1666,16 +1698,17 @@ state 77
     TkTake          reduce using rule 34 (boolExpression -> boolTerm .)
     TkDrop          reduce using rule 34 (boolExpression -> boolTerm .)
     TkLevel         reduce using rule 34 (boolExpression -> boolTerm .)
+    TkIdentify      reduce using rule 34 (boolExpression -> boolTerm .)
     TkTerminate     reduce using rule 34 (boolExpression -> boolTerm .)
     TkDefine        reduce using rule 34 (boolExpression -> boolTerm .)
     TkEnd           reduce using rule 34 (boolExpression -> boolTerm .)
     TkElse          reduce using rule 34 (boolExpression -> boolTerm .)
     TkCloseParent   reduce using rule 34 (boolExpression -> boolTerm .)
-    TkAnd           shift and go to state 131
-    TkOr            shift and go to state 132
+    TkAnd           shift and go to state 133
+    TkOr            shift and go to state 134
 
 
-state 78
+state 79
 
     (37) boolTerm -> boolFactor .
 
@@ -1699,6 +1732,7 @@ state 78
     TkTake          reduce using rule 37 (boolTerm -> boolFactor .)
     TkDrop          reduce using rule 37 (boolTerm -> boolFactor .)
     TkLevel         reduce using rule 37 (boolTerm -> boolFactor .)
+    TkIdentify      reduce using rule 37 (boolTerm -> boolFactor .)
     TkTerminate     reduce using rule 37 (boolTerm -> boolFactor .)
     TkDefine        reduce using rule 37 (boolTerm -> boolFactor .)
     TkEnd           reduce using rule 37 (boolTerm -> boolFactor .)
@@ -1706,7 +1740,7 @@ state 78
     TkCloseParent   reduce using rule 37 (boolTerm -> boolFactor .)
 
 
-state 79
+state 80
 
     (38) boolFactor -> TkNot . boolElement
     (40) boolElement -> . boolId
@@ -1744,32 +1778,32 @@ state 79
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolElement                    shift and go to state 133
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolElement                    shift and go to state 135
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 80
+state 81
 
     (39) boolFactor -> boolElement .
 
@@ -1793,6 +1827,7 @@ state 80
     TkTake          reduce using rule 39 (boolFactor -> boolElement .)
     TkDrop          reduce using rule 39 (boolFactor -> boolElement .)
     TkLevel         reduce using rule 39 (boolFactor -> boolElement .)
+    TkIdentify      reduce using rule 39 (boolFactor -> boolElement .)
     TkTerminate     reduce using rule 39 (boolFactor -> boolElement .)
     TkDefine        reduce using rule 39 (boolFactor -> boolElement .)
     TkEnd           reduce using rule 39 (boolFactor -> boolElement .)
@@ -1800,7 +1835,7 @@ state 80
     TkCloseParent   reduce using rule 39 (boolFactor -> boolElement .)
 
 
-state 81
+state 82
 
     (40) boolElement -> boolId .
 
@@ -1824,6 +1859,7 @@ state 81
     TkTake          reduce using rule 40 (boolElement -> boolId .)
     TkDrop          reduce using rule 40 (boolElement -> boolId .)
     TkLevel         reduce using rule 40 (boolElement -> boolId .)
+    TkIdentify      reduce using rule 40 (boolElement -> boolId .)
     TkTerminate     reduce using rule 40 (boolElement -> boolId .)
     TkDefine        reduce using rule 40 (boolElement -> boolId .)
     TkEnd           reduce using rule 40 (boolElement -> boolId .)
@@ -1831,7 +1867,7 @@ state 81
     TkCloseParent   reduce using rule 40 (boolElement -> boolId .)
 
 
-state 82
+state 83
 
     (41) boolElement -> boolC .
 
@@ -1855,6 +1891,7 @@ state 82
     TkTake          reduce using rule 41 (boolElement -> boolC .)
     TkDrop          reduce using rule 41 (boolElement -> boolC .)
     TkLevel         reduce using rule 41 (boolElement -> boolC .)
+    TkIdentify      reduce using rule 41 (boolElement -> boolC .)
     TkTerminate     reduce using rule 41 (boolElement -> boolC .)
     TkDefine        reduce using rule 41 (boolElement -> boolC .)
     TkEnd           reduce using rule 41 (boolElement -> boolC .)
@@ -1862,7 +1899,7 @@ state 82
     TkCloseParent   reduce using rule 41 (boolElement -> boolC .)
 
 
-state 83
+state 84
 
     (42) boolElement -> detectLeft .
 
@@ -1886,6 +1923,7 @@ state 83
     TkTake          reduce using rule 42 (boolElement -> detectLeft .)
     TkDrop          reduce using rule 42 (boolElement -> detectLeft .)
     TkLevel         reduce using rule 42 (boolElement -> detectLeft .)
+    TkIdentify      reduce using rule 42 (boolElement -> detectLeft .)
     TkTerminate     reduce using rule 42 (boolElement -> detectLeft .)
     TkDefine        reduce using rule 42 (boolElement -> detectLeft .)
     TkEnd           reduce using rule 42 (boolElement -> detectLeft .)
@@ -1893,7 +1931,7 @@ state 83
     TkCloseParent   reduce using rule 42 (boolElement -> detectLeft .)
 
 
-state 84
+state 85
 
     (43) boolElement -> detectRight .
 
@@ -1917,6 +1955,7 @@ state 84
     TkTake          reduce using rule 43 (boolElement -> detectRight .)
     TkDrop          reduce using rule 43 (boolElement -> detectRight .)
     TkLevel         reduce using rule 43 (boolElement -> detectRight .)
+    TkIdentify      reduce using rule 43 (boolElement -> detectRight .)
     TkTerminate     reduce using rule 43 (boolElement -> detectRight .)
     TkDefine        reduce using rule 43 (boolElement -> detectRight .)
     TkEnd           reduce using rule 43 (boolElement -> detectRight .)
@@ -1924,7 +1963,7 @@ state 84
     TkCloseParent   reduce using rule 43 (boolElement -> detectRight .)
 
 
-state 85
+state 86
 
     (44) boolElement -> detectFront .
 
@@ -1948,6 +1987,7 @@ state 85
     TkTake          reduce using rule 44 (boolElement -> detectFront .)
     TkDrop          reduce using rule 44 (boolElement -> detectFront .)
     TkLevel         reduce using rule 44 (boolElement -> detectFront .)
+    TkIdentify      reduce using rule 44 (boolElement -> detectFront .)
     TkTerminate     reduce using rule 44 (boolElement -> detectFront .)
     TkDefine        reduce using rule 44 (boolElement -> detectFront .)
     TkEnd           reduce using rule 44 (boolElement -> detectFront .)
@@ -1955,7 +1995,7 @@ state 85
     TkCloseParent   reduce using rule 44 (boolElement -> detectFront .)
 
 
-state 86
+state 87
 
     (45) boolElement -> idBlockIs .
 
@@ -1979,6 +2019,7 @@ state 86
     TkTake          reduce using rule 45 (boolElement -> idBlockIs .)
     TkDrop          reduce using rule 45 (boolElement -> idBlockIs .)
     TkLevel         reduce using rule 45 (boolElement -> idBlockIs .)
+    TkIdentify      reduce using rule 45 (boolElement -> idBlockIs .)
     TkTerminate     reduce using rule 45 (boolElement -> idBlockIs .)
     TkDefine        reduce using rule 45 (boolElement -> idBlockIs .)
     TkEnd           reduce using rule 45 (boolElement -> idBlockIs .)
@@ -1986,7 +2027,7 @@ state 86
     TkCloseParent   reduce using rule 45 (boolElement -> idBlockIs .)
 
 
-state 87
+state 88
 
     (46) boolElement -> boolIntExpression .
 
@@ -2010,6 +2051,7 @@ state 87
     TkTake          reduce using rule 46 (boolElement -> boolIntExpression .)
     TkDrop          reduce using rule 46 (boolElement -> boolIntExpression .)
     TkLevel         reduce using rule 46 (boolElement -> boolIntExpression .)
+    TkIdentify      reduce using rule 46 (boolElement -> boolIntExpression .)
     TkTerminate     reduce using rule 46 (boolElement -> boolIntExpression .)
     TkDefine        reduce using rule 46 (boolElement -> boolIntExpression .)
     TkEnd           reduce using rule 46 (boolElement -> boolIntExpression .)
@@ -2017,7 +2059,7 @@ state 87
     TkCloseParent   reduce using rule 46 (boolElement -> boolIntExpression .)
 
 
-state 88
+state 89
 
     (47) boolElement -> TkOpenParent . boolExpression TkCloseParent
     (71) intElement -> TkOpenParent . intExpression TkCloseParent
@@ -2064,36 +2106,36 @@ state 88
     (61) boolIntExpression -> . intExpression TkGreatT intExpression
     (62) boolIntExpression -> . intExpression TkGreatEq intExpression
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 134
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 136
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
 
-    boolExpression                 shift and go to state 135
-    intExpression                  shift and go to state 136
-    boolTerm                       shift and go to state 77
-    intTerm                        shift and go to state 98
-    boolFactor                     shift and go to state 78
-    intElement                     shift and go to state 99
-    boolElement                    shift and go to state 80
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
+    boolExpression                 shift and go to state 137
+    intExpression                  shift and go to state 138
+    boolTerm                       shift and go to state 78
+    intTerm                        shift and go to state 99
+    boolFactor                     shift and go to state 79
+    intElement                     shift and go to state 100
+    boolElement                    shift and go to state 81
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
 
-state 89
+state 90
 
     (56) boolId -> TkId .
 
@@ -2117,6 +2159,7 @@ state 89
     TkTake          reduce using rule 56 (boolId -> TkId .)
     TkDrop          reduce using rule 56 (boolId -> TkId .)
     TkLevel         reduce using rule 56 (boolId -> TkId .)
+    TkIdentify      reduce using rule 56 (boolId -> TkId .)
     TkTerminate     reduce using rule 56 (boolId -> TkId .)
     TkDefine        reduce using rule 56 (boolId -> TkId .)
     TkEnd           reduce using rule 56 (boolId -> TkId .)
@@ -2124,7 +2167,7 @@ state 89
     TkCloseParent   reduce using rule 56 (boolId -> TkId .)
 
 
-state 90
+state 91
 
     (48) boolC -> TkTrue .
 
@@ -2148,6 +2191,7 @@ state 90
     TkTake          reduce using rule 48 (boolC -> TkTrue .)
     TkDrop          reduce using rule 48 (boolC -> TkTrue .)
     TkLevel         reduce using rule 48 (boolC -> TkTrue .)
+    TkIdentify      reduce using rule 48 (boolC -> TkTrue .)
     TkTerminate     reduce using rule 48 (boolC -> TkTrue .)
     TkDefine        reduce using rule 48 (boolC -> TkTrue .)
     TkEnd           reduce using rule 48 (boolC -> TkTrue .)
@@ -2155,7 +2199,7 @@ state 90
     TkCloseParent   reduce using rule 48 (boolC -> TkTrue .)
 
 
-state 91
+state 92
 
     (49) boolC -> TkFalse .
 
@@ -2179,6 +2223,7 @@ state 91
     TkTake          reduce using rule 49 (boolC -> TkFalse .)
     TkDrop          reduce using rule 49 (boolC -> TkFalse .)
     TkLevel         reduce using rule 49 (boolC -> TkFalse .)
+    TkIdentify      reduce using rule 49 (boolC -> TkFalse .)
     TkTerminate     reduce using rule 49 (boolC -> TkFalse .)
     TkDefine        reduce using rule 49 (boolC -> TkFalse .)
     TkEnd           reduce using rule 49 (boolC -> TkFalse .)
@@ -2186,7 +2231,7 @@ state 91
     TkCloseParent   reduce using rule 49 (boolC -> TkFalse .)
 
 
-state 92
+state 93
 
     (50) detectLeft -> TkDetectL .
 
@@ -2210,6 +2255,7 @@ state 92
     TkTake          reduce using rule 50 (detectLeft -> TkDetectL .)
     TkDrop          reduce using rule 50 (detectLeft -> TkDetectL .)
     TkLevel         reduce using rule 50 (detectLeft -> TkDetectL .)
+    TkIdentify      reduce using rule 50 (detectLeft -> TkDetectL .)
     TkTerminate     reduce using rule 50 (detectLeft -> TkDetectL .)
     TkDefine        reduce using rule 50 (detectLeft -> TkDetectL .)
     TkEnd           reduce using rule 50 (detectLeft -> TkDetectL .)
@@ -2217,7 +2263,7 @@ state 92
     TkCloseParent   reduce using rule 50 (detectLeft -> TkDetectL .)
 
 
-state 93
+state 94
 
     (51) detectRight -> TkDetectR .
 
@@ -2241,6 +2287,7 @@ state 93
     TkTake          reduce using rule 51 (detectRight -> TkDetectR .)
     TkDrop          reduce using rule 51 (detectRight -> TkDetectR .)
     TkLevel         reduce using rule 51 (detectRight -> TkDetectR .)
+    TkIdentify      reduce using rule 51 (detectRight -> TkDetectR .)
     TkTerminate     reduce using rule 51 (detectRight -> TkDetectR .)
     TkDefine        reduce using rule 51 (detectRight -> TkDetectR .)
     TkEnd           reduce using rule 51 (detectRight -> TkDetectR .)
@@ -2248,7 +2295,7 @@ state 93
     TkCloseParent   reduce using rule 51 (detectRight -> TkDetectR .)
 
 
-state 94
+state 95
 
     (52) detectFront -> TkDetectF .
 
@@ -2272,6 +2319,7 @@ state 94
     TkTake          reduce using rule 52 (detectFront -> TkDetectF .)
     TkDrop          reduce using rule 52 (detectFront -> TkDetectF .)
     TkLevel         reduce using rule 52 (detectFront -> TkDetectF .)
+    TkIdentify      reduce using rule 52 (detectFront -> TkDetectF .)
     TkTerminate     reduce using rule 52 (detectFront -> TkDetectF .)
     TkDefine        reduce using rule 52 (detectFront -> TkDetectF .)
     TkEnd           reduce using rule 52 (detectFront -> TkDetectF .)
@@ -2279,7 +2327,7 @@ state 94
     TkCloseParent   reduce using rule 52 (detectFront -> TkDetectF .)
 
 
-state 95
+state 96
 
     (53) idBlockIs -> TkLastIdBlockIs . TkNum
     (54) idBlockIs -> TkLastIdBlockIs . TkBNum
@@ -2289,16 +2337,16 @@ state 95
     (23) color -> . TkGreen
     (24) color -> . TkYellow
 
-    TkNum           shift and go to state 137
-    TkBNum          shift and go to state 138
-    TkRed           shift and go to state 63
-    TkBlue          shift and go to state 64
-    TkGreen         shift and go to state 65
-    TkYellow        shift and go to state 66
+    TkNum           shift and go to state 139
+    TkBNum          shift and go to state 140
+    TkRed           shift and go to state 64
+    TkBlue          shift and go to state 65
+    TkGreen         shift and go to state 66
+    TkYellow        shift and go to state 67
 
-    color                          shift and go to state 139
+    color                          shift and go to state 141
 
-state 96
+state 97
 
     (73) intConst -> TkNum .
 
@@ -2326,6 +2374,7 @@ state 96
     TkTake          reduce using rule 73 (intConst -> TkNum .)
     TkDrop          reduce using rule 73 (intConst -> TkNum .)
     TkLevel         reduce using rule 73 (intConst -> TkNum .)
+    TkIdentify      reduce using rule 73 (intConst -> TkNum .)
     TkTerminate     reduce using rule 73 (intConst -> TkNum .)
     TkDefine        reduce using rule 73 (intConst -> TkNum .)
     TkEnd           reduce using rule 73 (intConst -> TkNum .)
@@ -2337,7 +2386,7 @@ state 96
     TkDo            reduce using rule 73 (intConst -> TkNum .)
 
 
-state 97
+state 98
 
     (57) boolIntExpression -> intExpression . TkEquiv intExpression
     (58) boolIntExpression -> intExpression . TkNotEqual intExpression
@@ -2348,17 +2397,17 @@ state 97
     (63) intExpression -> intExpression . TkPlus intTerm
     (64) intExpression -> intExpression . TkMinus intTerm
 
-    TkEquiv         shift and go to state 140
-    TkNotEqual      shift and go to state 141
-    TkLessT         shift and go to state 142
-    TkLessEq        shift and go to state 143
-    TkGreatT        shift and go to state 144
-    TkGreatEq       shift and go to state 145
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkEquiv         shift and go to state 142
+    TkNotEqual      shift and go to state 143
+    TkLessT         shift and go to state 144
+    TkLessEq        shift and go to state 145
+    TkGreatT        shift and go to state 146
+    TkGreatEq       shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 98
+state 99
 
     (65) intExpression -> intTerm .
     (66) intTerm -> intTerm . TkMult intElement
@@ -2386,6 +2435,7 @@ state 98
     TkTake          reduce using rule 65 (intExpression -> intTerm .)
     TkDrop          reduce using rule 65 (intExpression -> intTerm .)
     TkLevel         reduce using rule 65 (intExpression -> intTerm .)
+    TkIdentify      reduce using rule 65 (intExpression -> intTerm .)
     TkTerminate     reduce using rule 65 (intExpression -> intTerm .)
     TkDefine        reduce using rule 65 (intExpression -> intTerm .)
     TkEnd           reduce using rule 65 (intExpression -> intTerm .)
@@ -2395,11 +2445,11 @@ state 98
     TkOr            reduce using rule 65 (intExpression -> intTerm .)
     TkThen          reduce using rule 65 (intExpression -> intTerm .)
     TkDo            reduce using rule 65 (intExpression -> intTerm .)
-    TkMult          shift and go to state 148
-    TkMod           shift and go to state 149
+    TkMult          shift and go to state 150
+    TkMod           shift and go to state 151
 
 
-state 99
+state 100
 
     (68) intTerm -> intElement .
 
@@ -2427,6 +2477,7 @@ state 99
     TkTake          reduce using rule 68 (intTerm -> intElement .)
     TkDrop          reduce using rule 68 (intTerm -> intElement .)
     TkLevel         reduce using rule 68 (intTerm -> intElement .)
+    TkIdentify      reduce using rule 68 (intTerm -> intElement .)
     TkTerminate     reduce using rule 68 (intTerm -> intElement .)
     TkDefine        reduce using rule 68 (intTerm -> intElement .)
     TkEnd           reduce using rule 68 (intTerm -> intElement .)
@@ -2438,7 +2489,7 @@ state 99
     TkDo            reduce using rule 68 (intTerm -> intElement .)
 
 
-state 100
+state 101
 
     (69) intElement -> intId .
 
@@ -2466,6 +2517,7 @@ state 100
     TkTake          reduce using rule 69 (intElement -> intId .)
     TkDrop          reduce using rule 69 (intElement -> intId .)
     TkLevel         reduce using rule 69 (intElement -> intId .)
+    TkIdentify      reduce using rule 69 (intElement -> intId .)
     TkTerminate     reduce using rule 69 (intElement -> intId .)
     TkDefine        reduce using rule 69 (intElement -> intId .)
     TkEnd           reduce using rule 69 (intElement -> intId .)
@@ -2477,7 +2529,7 @@ state 100
     TkDo            reduce using rule 69 (intElement -> intId .)
 
 
-state 101
+state 102
 
     (70) intElement -> intConst .
 
@@ -2505,6 +2557,7 @@ state 101
     TkTake          reduce using rule 70 (intElement -> intConst .)
     TkDrop          reduce using rule 70 (intElement -> intConst .)
     TkLevel         reduce using rule 70 (intElement -> intConst .)
+    TkIdentify      reduce using rule 70 (intElement -> intConst .)
     TkTerminate     reduce using rule 70 (intElement -> intConst .)
     TkDefine        reduce using rule 70 (intElement -> intConst .)
     TkEnd           reduce using rule 70 (intElement -> intConst .)
@@ -2516,7 +2569,7 @@ state 101
     TkDo            reduce using rule 70 (intElement -> intConst .)
 
 
-state 102
+state 103
 
     (72) intId -> TkNId .
 
@@ -2544,6 +2597,7 @@ state 102
     TkTake          reduce using rule 72 (intId -> TkNId .)
     TkDrop          reduce using rule 72 (intId -> TkNId .)
     TkLevel         reduce using rule 72 (intId -> TkNId .)
+    TkIdentify      reduce using rule 72 (intId -> TkNId .)
     TkTerminate     reduce using rule 72 (intId -> TkNId .)
     TkDefine        reduce using rule 72 (intId -> TkNId .)
     TkEnd           reduce using rule 72 (intId -> TkNId .)
@@ -2555,25 +2609,25 @@ state 102
     TkDo            reduce using rule 72 (intId -> TkNId .)
 
 
-state 103
+state 104
 
     (94) repeat -> TkRepeat TkNum . TkTimes instruction
 
-    TkTimes         shift and go to state 150
+    TkTimes         shift and go to state 152
 
 
-state 104
+state 105
 
     (95) while -> TkWhile boolExpression . TkDo instruction
     (32) boolExpression -> boolExpression . TkEquiv boolTerm
     (33) boolExpression -> boolExpression . TkNotEqual boolTerm
 
-    TkDo            shift and go to state 151
-    TkEquiv         shift and go to state 129
-    TkNotEqual      shift and go to state 130
+    TkDo            shift and go to state 153
+    TkEquiv         shift and go to state 131
+    TkNotEqual      shift and go to state 132
 
 
-state 105
+state 106
 
     (96) beginInstruction -> TkBegin taskInstruction . TkEnd
     (78) taskInstruction -> taskInstruction . instruction
@@ -2601,13 +2655,14 @@ state 105
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
-    TkEnd           shift and go to state 152
-    TkSemiColon     shift and go to state 73
+    TkEnd           shift and go to state 154
+    TkSemiColon     shift and go to state 74
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
     TkIf            shift and go to state 43
@@ -2620,10 +2675,11 @@ state 105
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    instruction                    shift and go to state 72
+    instruction                    shift and go to state 73
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
     if                             shift and go to state 35
@@ -2633,9 +2689,9 @@ state 105
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
-state 106
+state 107
 
     (97) beginInstruction -> TkBegin TkEnd .
 
@@ -2653,13 +2709,14 @@ state 106
     TkTake          reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
     TkDrop          reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
     TkLevel         reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
+    TkIdentify      reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
     TkTerminate     reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
     TkDefine        reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
     TkEnd           reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
     TkElse          reduce using rule 97 (beginInstruction -> TkBegin TkEnd .)
 
 
-state 107
+state 108
 
     (98) defineInstruction -> startDefine instDefine .
 
@@ -2677,13 +2734,14 @@ state 107
     TkTake          reduce using rule 98 (defineInstruction -> startDefine instDefine .)
     TkDrop          reduce using rule 98 (defineInstruction -> startDefine instDefine .)
     TkLevel         reduce using rule 98 (defineInstruction -> startDefine instDefine .)
+    TkIdentify      reduce using rule 98 (defineInstruction -> startDefine instDefine .)
     TkTerminate     reduce using rule 98 (defineInstruction -> startDefine instDefine .)
     TkDefine        reduce using rule 98 (defineInstruction -> startDefine instDefine .)
     TkEnd           reduce using rule 98 (defineInstruction -> startDefine instDefine .)
     TkElse          reduce using rule 98 (defineInstruction -> startDefine instDefine .)
 
 
-state 108
+state 109
 
     (100) instDefine -> TkAs . instruction
     (82) instruction -> . assignBool
@@ -2709,10 +2767,11 @@ state 108
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
@@ -2726,10 +2785,11 @@ state 108
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    instruction                    shift and go to state 153
+    instruction                    shift and go to state 155
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
     if                             shift and go to state 35
@@ -2739,9 +2799,9 @@ state 108
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
-state 109
+state 110
 
     (101) willyInstruction -> TkMove TkSemiColon .
 
@@ -2759,13 +2819,14 @@ state 109
     TkTake          reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
     TkDrop          reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
     TkLevel         reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
+    TkIdentify      reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
     TkTerminate     reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
     TkDefine        reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
     TkEnd           reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
     TkElse          reduce using rule 101 (willyInstruction -> TkMove TkSemiColon .)
 
 
-state 110
+state 111
 
     (102) willyInstruction -> TkTurnL TkSemiColon .
 
@@ -2783,13 +2844,14 @@ state 110
     TkTake          reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
     TkDrop          reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
     TkLevel         reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
+    TkIdentify      reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
     TkTerminate     reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
     TkDefine        reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
     TkEnd           reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
     TkElse          reduce using rule 102 (willyInstruction -> TkTurnL TkSemiColon .)
 
 
-state 111
+state 112
 
     (103) willyInstruction -> TkTurnR TkSemiColon .
 
@@ -2807,13 +2869,14 @@ state 111
     TkTake          reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
     TkDrop          reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
     TkLevel         reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
+    TkIdentify      reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
     TkTerminate     reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
     TkDefine        reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
     TkEnd           reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
     TkElse          reduce using rule 103 (willyInstruction -> TkTurnR TkSemiColon .)
 
 
-state 112
+state 113
 
     (104) willyInstruction -> TkTake TkSemiColon .
 
@@ -2831,13 +2894,14 @@ state 112
     TkTake          reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
     TkDrop          reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
     TkLevel         reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
+    TkIdentify      reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
     TkTerminate     reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
     TkDefine        reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
     TkEnd           reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
     TkElse          reduce using rule 104 (willyInstruction -> TkTake TkSemiColon .)
 
 
-state 113
+state 114
 
     (105) willyInstruction -> TkDrop TkSemiColon .
 
@@ -2855,102 +2919,130 @@ state 113
     TkTake          reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
     TkDrop          reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
     TkLevel         reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
+    TkIdentify      reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
     TkTerminate     reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
     TkDefine        reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
     TkEnd           reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
     TkElse          reduce using rule 105 (willyInstruction -> TkDrop TkSemiColon .)
 
 
-state 114
+state 115
 
     (106) willyInstruction -> TkLevel TkNum . TkSemiColon
 
-    TkSemiColon     shift and go to state 154
-
-
-state 115
-
-    (107) willyInstruction -> TkTerminate TkSemiColon .
-
-    TkEndTask       reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkSemiColon     reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkId            reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkNId           reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkIf            reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkRepeat        reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkWhile         reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkBegin         reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkMove          reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkTurnL         reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkTurnR         reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkTake          reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkDrop          reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkLevel         reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkTerminate     reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkDefine        reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkEnd           reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
-    TkElse          reduce using rule 107 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkSemiColon     shift and go to state 156
 
 
 state 116
 
-    (108) willyInstruction -> willyInstructionId TkSemiColon .
+    (107) willyInstruction -> TkIdentify TkSemiColon .
 
-    TkEndTask       reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkSemiColon     reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkId            reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkNId           reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkIf            reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkRepeat        reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkWhile         reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkBegin         reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkMove          reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkTurnL         reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkTurnR         reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkTake          reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkDrop          reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkLevel         reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkTerminate     reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkDefine        reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkEnd           reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
-    TkElse          reduce using rule 108 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkEndTask       reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkSemiColon     reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkId            reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkNId           reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkIf            reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkRepeat        reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkWhile         reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkBegin         reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkMove          reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkTurnL         reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkTurnR         reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkTake          reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkDrop          reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkLevel         reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkIdentify      reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkTerminate     reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkDefine        reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkEnd           reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
+    TkElse          reduce using rule 107 (willyInstruction -> TkIdentify TkSemiColon .)
 
 
 state 117
+
+    (108) willyInstruction -> TkTerminate TkSemiColon .
+
+    TkEndTask       reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkSemiColon     reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkId            reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkNId           reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkIf            reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkRepeat        reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkWhile         reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkBegin         reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkMove          reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkTurnL         reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkTurnR         reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkTake          reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkDrop          reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkLevel         reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkIdentify      reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkTerminate     reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkDefine        reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkEnd           reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+    TkElse          reduce using rule 108 (willyInstruction -> TkTerminate TkSemiColon .)
+
+
+state 118
+
+    (109) willyInstruction -> willyInstructionId TkSemiColon .
+
+    TkEndTask       reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkSemiColon     reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkId            reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkNId           reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkIf            reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkRepeat        reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkWhile         reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkBegin         reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkMove          reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkTurnL         reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkTurnR         reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkTake          reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkDrop          reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkLevel         reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkIdentify      reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkTerminate     reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkDefine        reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkEnd           reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+    TkElse          reduce using rule 109 (willyInstruction -> willyInstructionId TkSemiColon .)
+
+
+state 119
 
     (99) startDefine -> TkDefine TkId .
 
     TkAs            reduce using rule 99 (startDefine -> TkDefine TkId .)
 
 
-state 118
+state 120
 
     (25) placeBlock -> TkPlaceBlock TkNum TkAt . position TkSemiColon
     (16) position -> . TkNum TkNum
 
-    TkNum           shift and go to state 68
-
-    position                       shift and go to state 155
-
-state 119
-
-    (26) placeBlock -> TkPlaceBlock TkBNum TkAt . position TkSemiColon
-    (16) position -> . TkNum TkNum
-
-    TkNum           shift and go to state 68
-
-    position                       shift and go to state 156
-
-state 120
-
-    (27) placeBlock -> TkPlaceBlock color TkAt . position TkSemiColon
-    (16) position -> . TkNum TkNum
-
-    TkNum           shift and go to state 68
+    TkNum           shift and go to state 69
 
     position                       shift and go to state 157
 
 state 121
+
+    (26) placeBlock -> TkPlaceBlock TkBNum TkAt . position TkSemiColon
+    (16) position -> . TkNum TkNum
+
+    TkNum           shift and go to state 69
+
+    position                       shift and go to state 158
+
+state 122
+
+    (27) placeBlock -> TkPlaceBlock color TkAt . position TkSemiColon
+    (16) position -> . TkNum TkNum
+
+    TkNum           shift and go to state 69
+
+    position                       shift and go to state 159
+
+state 123
 
     (28) startAt -> TkStartAt position TkHeading . orientation TkSemiColon
     (17) orientation -> . TkNorth
@@ -2958,14 +3050,14 @@ state 121
     (19) orientation -> . TkWest
     (20) orientation -> . TkSouth
 
-    TkNorth         shift and go to state 159
-    TkEast          shift and go to state 160
-    TkWest          shift and go to state 161
-    TkSouth         shift and go to state 162
+    TkNorth         shift and go to state 161
+    TkEast          shift and go to state 162
+    TkWest          shift and go to state 163
+    TkSouth         shift and go to state 164
 
-    orientation                    shift and go to state 158
+    orientation                    shift and go to state 160
 
-state 122
+state 124
 
     (16) position -> TkNum TkNum .
 
@@ -2973,23 +3065,23 @@ state 122
     TkSemiColon     reduce using rule 16 (position -> TkNum TkNum .)
 
 
-state 123
+state 125
 
     (29) boolean -> TkBoolean TkId TkEqual . TkTrue TkSemiColon
     (30) boolean -> TkBoolean TkId TkEqual . TkFalse TkSemiColon
 
-    TkTrue          shift and go to state 163
-    TkFalse         shift and go to state 164
+    TkTrue          shift and go to state 165
+    TkFalse         shift and go to state 166
 
 
-state 124
+state 126
 
     (31) integer -> TkInteger TkNId TkEqual . TkNum TkSemiColon
 
-    TkNum           shift and go to state 165
+    TkNum           shift and go to state 167
 
 
-state 125
+state 127
 
     (90) assignBool -> TkId TkEqual boolExpression .
     (32) boolExpression -> boolExpression . TkEquiv boolTerm
@@ -3009,15 +3101,16 @@ state 125
     TkTake          reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
     TkDrop          reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
     TkLevel         reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
+    TkIdentify      reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
     TkTerminate     reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
     TkDefine        reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
     TkEnd           reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
     TkElse          reduce using rule 90 (assignBool -> TkId TkEqual boolExpression .)
-    TkEquiv         shift and go to state 129
-    TkNotEqual      shift and go to state 130
+    TkEquiv         shift and go to state 131
+    TkNotEqual      shift and go to state 132
 
 
-state 126
+state 128
 
     (91) assignInt -> TkNId TkEqual intExpression .
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -3037,15 +3130,16 @@ state 126
     TkTake          reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
     TkDrop          reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
     TkLevel         reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
+    TkIdentify      reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
     TkTerminate     reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
     TkDefine        reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
     TkEnd           reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
     TkElse          reduce using rule 91 (assignInt -> TkNId TkEqual intExpression .)
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 127
+state 129
 
     (71) intElement -> TkOpenParent . intExpression TkCloseParent
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -3060,17 +3154,17 @@ state 127
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 166
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 168
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 128
+state 130
 
     (92) if -> TkIf boolExpression TkThen . instruction
     (93) if -> TkIf boolExpression TkThen . instruction TkElse instruction
@@ -3097,10 +3191,11 @@ state 128
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
@@ -3114,10 +3209,11 @@ state 128
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    instruction                    shift and go to state 167
+    instruction                    shift and go to state 169
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
     if                             shift and go to state 35
@@ -3127,9 +3223,9 @@ state 128
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
-state 129
+state 131
 
     (32) boolExpression -> boolExpression TkEquiv . boolTerm
     (35) boolTerm -> . boolTerm TkAnd boolFactor
@@ -3172,35 +3268,35 @@ state 129
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolTerm                       shift and go to state 168
-    boolFactor                     shift and go to state 78
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolTerm                       shift and go to state 170
+    boolFactor                     shift and go to state 79
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 130
+state 132
 
     (33) boolExpression -> boolExpression TkNotEqual . boolTerm
     (35) boolTerm -> . boolTerm TkAnd boolFactor
@@ -3243,35 +3339,35 @@ state 130
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolTerm                       shift and go to state 169
-    boolFactor                     shift and go to state 78
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolTerm                       shift and go to state 171
+    boolFactor                     shift and go to state 79
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 131
+state 133
 
     (35) boolTerm -> boolTerm TkAnd . boolFactor
     (38) boolFactor -> . TkNot boolElement
@@ -3311,34 +3407,34 @@ state 131
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolFactor                     shift and go to state 170
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolFactor                     shift and go to state 172
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 132
+state 134
 
     (36) boolTerm -> boolTerm TkOr . boolFactor
     (38) boolFactor -> . TkNot boolElement
@@ -3378,34 +3474,34 @@ state 132
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkNot           shift and go to state 79
-    TkOpenParent    shift and go to state 88
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkNot           shift and go to state 80
+    TkOpenParent    shift and go to state 89
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    boolFactor                     shift and go to state 171
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
-    intExpression                  shift and go to state 97
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    boolFactor                     shift and go to state 173
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
+    intExpression                  shift and go to state 98
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 133
+state 135
 
     (38) boolFactor -> TkNot boolElement .
 
@@ -3429,6 +3525,7 @@ state 133
     TkTake          reduce using rule 38 (boolFactor -> TkNot boolElement .)
     TkDrop          reduce using rule 38 (boolFactor -> TkNot boolElement .)
     TkLevel         reduce using rule 38 (boolFactor -> TkNot boolElement .)
+    TkIdentify      reduce using rule 38 (boolFactor -> TkNot boolElement .)
     TkTerminate     reduce using rule 38 (boolFactor -> TkNot boolElement .)
     TkDefine        reduce using rule 38 (boolFactor -> TkNot boolElement .)
     TkEnd           reduce using rule 38 (boolFactor -> TkNot boolElement .)
@@ -3436,7 +3533,7 @@ state 133
     TkCloseParent   reduce using rule 38 (boolFactor -> TkNot boolElement .)
 
 
-state 134
+state 136
 
     (71) intElement -> TkOpenParent . intExpression TkCloseParent
     (47) boolElement -> TkOpenParent . boolExpression TkCloseParent
@@ -3483,47 +3580,47 @@ state 134
     (61) boolIntExpression -> . intExpression TkGreatT intExpression
     (62) boolIntExpression -> . intExpression TkGreatEq intExpression
 
-    TkOpenParent    shift and go to state 134
-    TkNot           shift and go to state 79
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
-    TkId            shift and go to state 89
-    TkTrue          shift and go to state 90
-    TkFalse         shift and go to state 91
-    TkDetectL       shift and go to state 92
-    TkDetectR       shift and go to state 93
-    TkDetectF       shift and go to state 94
-    TkLastIdBlockIs shift and go to state 95
+    TkOpenParent    shift and go to state 136
+    TkNot           shift and go to state 80
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
+    TkId            shift and go to state 90
+    TkTrue          shift and go to state 91
+    TkFalse         shift and go to state 92
+    TkDetectL       shift and go to state 93
+    TkDetectR       shift and go to state 94
+    TkDetectF       shift and go to state 95
+    TkLastIdBlockIs shift and go to state 96
 
-    intExpression                  shift and go to state 136
-    boolExpression                 shift and go to state 135
-    intTerm                        shift and go to state 98
-    boolTerm                       shift and go to state 77
-    intElement                     shift and go to state 99
-    boolFactor                     shift and go to state 78
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
-    boolElement                    shift and go to state 80
-    boolId                         shift and go to state 81
-    boolC                          shift and go to state 82
-    detectLeft                     shift and go to state 83
-    detectRight                    shift and go to state 84
-    detectFront                    shift and go to state 85
-    idBlockIs                      shift and go to state 86
-    boolIntExpression              shift and go to state 87
+    intExpression                  shift and go to state 138
+    boolExpression                 shift and go to state 137
+    intTerm                        shift and go to state 99
+    boolTerm                       shift and go to state 78
+    intElement                     shift and go to state 100
+    boolFactor                     shift and go to state 79
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
+    boolElement                    shift and go to state 81
+    boolId                         shift and go to state 82
+    boolC                          shift and go to state 83
+    detectLeft                     shift and go to state 84
+    detectRight                    shift and go to state 85
+    detectFront                    shift and go to state 86
+    idBlockIs                      shift and go to state 87
+    boolIntExpression              shift and go to state 88
 
-state 135
+state 137
 
     (47) boolElement -> TkOpenParent boolExpression . TkCloseParent
     (32) boolExpression -> boolExpression . TkEquiv boolTerm
     (33) boolExpression -> boolExpression . TkNotEqual boolTerm
 
-    TkCloseParent   shift and go to state 172
-    TkEquiv         shift and go to state 129
-    TkNotEqual      shift and go to state 130
+    TkCloseParent   shift and go to state 174
+    TkEquiv         shift and go to state 131
+    TkNotEqual      shift and go to state 132
 
 
-state 136
+state 138
 
     (71) intElement -> TkOpenParent intExpression . TkCloseParent
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -3535,18 +3632,18 @@ state 136
     (61) boolIntExpression -> intExpression . TkGreatT intExpression
     (62) boolIntExpression -> intExpression . TkGreatEq intExpression
 
-    TkCloseParent   shift and go to state 173
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
-    TkEquiv         shift and go to state 140
-    TkNotEqual      shift and go to state 141
-    TkLessT         shift and go to state 142
-    TkLessEq        shift and go to state 143
-    TkGreatT        shift and go to state 144
-    TkGreatEq       shift and go to state 145
+    TkCloseParent   shift and go to state 175
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
+    TkEquiv         shift and go to state 142
+    TkNotEqual      shift and go to state 143
+    TkLessT         shift and go to state 144
+    TkLessEq        shift and go to state 145
+    TkGreatT        shift and go to state 146
+    TkGreatEq       shift and go to state 147
 
 
-state 137
+state 139
 
     (53) idBlockIs -> TkLastIdBlockIs TkNum .
 
@@ -3570,6 +3667,7 @@ state 137
     TkTake          reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
     TkDrop          reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
     TkLevel         reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
+    TkIdentify      reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
     TkTerminate     reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
     TkDefine        reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
     TkEnd           reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
@@ -3577,7 +3675,7 @@ state 137
     TkCloseParent   reduce using rule 53 (idBlockIs -> TkLastIdBlockIs TkNum .)
 
 
-state 138
+state 140
 
     (54) idBlockIs -> TkLastIdBlockIs TkBNum .
 
@@ -3601,6 +3699,7 @@ state 138
     TkTake          reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
     TkDrop          reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
     TkLevel         reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
+    TkIdentify      reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
     TkTerminate     reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
     TkDefine        reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
     TkEnd           reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
@@ -3608,7 +3707,7 @@ state 138
     TkCloseParent   reduce using rule 54 (idBlockIs -> TkLastIdBlockIs TkBNum .)
 
 
-state 139
+state 141
 
     (55) idBlockIs -> TkLastIdBlockIs color .
 
@@ -3632,6 +3731,7 @@ state 139
     TkTake          reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
     TkDrop          reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
     TkLevel         reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
+    TkIdentify      reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
     TkTerminate     reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
     TkDefine        reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
     TkEnd           reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
@@ -3639,7 +3739,7 @@ state 139
     TkCloseParent   reduce using rule 55 (idBlockIs -> TkLastIdBlockIs color .)
 
 
-state 140
+state 142
 
     (57) boolIntExpression -> intExpression TkEquiv . intExpression
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -3654,17 +3754,17 @@ state 140
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 174
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 176
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 141
+state 143
 
     (58) boolIntExpression -> intExpression TkNotEqual . intExpression
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -3679,17 +3779,17 @@ state 141
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 175
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 177
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 142
+state 144
 
     (59) boolIntExpression -> intExpression TkLessT . intExpression
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -3704,17 +3804,17 @@ state 142
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 176
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 178
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 143
+state 145
 
     (60) boolIntExpression -> intExpression TkLessEq . intExpression
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -3729,17 +3829,17 @@ state 143
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 177
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 179
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 144
+state 146
 
     (61) boolIntExpression -> intExpression TkGreatT . intExpression
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -3754,17 +3854,17 @@ state 144
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 178
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 180
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 145
+state 147
 
     (62) boolIntExpression -> intExpression TkGreatEq . intExpression
     (63) intExpression -> . intExpression TkPlus intTerm
@@ -3779,17 +3879,17 @@ state 145
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intExpression                  shift and go to state 179
-    intTerm                        shift and go to state 98
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intExpression                  shift and go to state 181
+    intTerm                        shift and go to state 99
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 146
+state 148
 
     (63) intExpression -> intExpression TkPlus . intTerm
     (66) intTerm -> . intTerm TkMult intElement
@@ -3801,16 +3901,16 @@ state 146
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intTerm                        shift and go to state 180
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intTerm                        shift and go to state 182
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 147
+state 149
 
     (64) intExpression -> intExpression TkMinus . intTerm
     (66) intTerm -> . intTerm TkMult intElement
@@ -3822,16 +3922,16 @@ state 147
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intTerm                        shift and go to state 181
-    intElement                     shift and go to state 99
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intTerm                        shift and go to state 183
+    intElement                     shift and go to state 100
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 148
+state 150
 
     (66) intTerm -> intTerm TkMult . intElement
     (69) intElement -> . intId
@@ -3840,15 +3940,15 @@ state 148
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intElement                     shift and go to state 182
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intElement                     shift and go to state 184
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 149
+state 151
 
     (67) intTerm -> intTerm TkMod . intElement
     (69) intElement -> . intId
@@ -3857,15 +3957,15 @@ state 149
     (72) intId -> . TkNId
     (73) intConst -> . TkNum
 
-    TkOpenParent    shift and go to state 127
-    TkNId           shift and go to state 102
-    TkNum           shift and go to state 96
+    TkOpenParent    shift and go to state 129
+    TkNId           shift and go to state 103
+    TkNum           shift and go to state 97
 
-    intElement                     shift and go to state 183
-    intId                          shift and go to state 100
-    intConst                       shift and go to state 101
+    intElement                     shift and go to state 185
+    intId                          shift and go to state 101
+    intConst                       shift and go to state 102
 
-state 150
+state 152
 
     (94) repeat -> TkRepeat TkNum TkTimes . instruction
     (82) instruction -> . assignBool
@@ -3891,10 +3991,11 @@ state 150
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
@@ -3908,10 +4009,11 @@ state 150
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    instruction                    shift and go to state 184
+    instruction                    shift and go to state 186
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
     if                             shift and go to state 35
@@ -3921,9 +4023,9 @@ state 150
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
-state 151
+state 153
 
     (95) while -> TkWhile boolExpression TkDo . instruction
     (82) instruction -> . assignBool
@@ -3949,10 +4051,11 @@ state 151
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
@@ -3966,10 +4069,11 @@ state 151
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    instruction                    shift and go to state 185
+    instruction                    shift and go to state 187
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
     if                             shift and go to state 35
@@ -3979,9 +4083,9 @@ state 151
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
-state 152
+state 154
 
     (96) beginInstruction -> TkBegin taskInstruction TkEnd .
 
@@ -3999,13 +4103,14 @@ state 152
     TkTake          reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
     TkDrop          reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
     TkLevel         reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
+    TkIdentify      reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
     TkTerminate     reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
     TkDefine        reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
     TkEnd           reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
     TkElse          reduce using rule 96 (beginInstruction -> TkBegin taskInstruction TkEnd .)
 
 
-state 153
+state 155
 
     (100) instDefine -> TkAs instruction .
 
@@ -4023,13 +4128,14 @@ state 153
     TkTake          reduce using rule 100 (instDefine -> TkAs instruction .)
     TkDrop          reduce using rule 100 (instDefine -> TkAs instruction .)
     TkLevel         reduce using rule 100 (instDefine -> TkAs instruction .)
+    TkIdentify      reduce using rule 100 (instDefine -> TkAs instruction .)
     TkTerminate     reduce using rule 100 (instDefine -> TkAs instruction .)
     TkDefine        reduce using rule 100 (instDefine -> TkAs instruction .)
     TkEnd           reduce using rule 100 (instDefine -> TkAs instruction .)
     TkElse          reduce using rule 100 (instDefine -> TkAs instruction .)
 
 
-state 154
+state 156
 
     (106) willyInstruction -> TkLevel TkNum TkSemiColon .
 
@@ -4047,101 +4153,102 @@ state 154
     TkTake          reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
     TkDrop          reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
     TkLevel         reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
+    TkIdentify      reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
     TkTerminate     reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
     TkDefine        reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
     TkEnd           reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
     TkElse          reduce using rule 106 (willyInstruction -> TkLevel TkNum TkSemiColon .)
 
 
-state 155
-
-    (25) placeBlock -> TkPlaceBlock TkNum TkAt position . TkSemiColon
-
-    TkSemiColon     shift and go to state 186
-
-
-state 156
-
-    (26) placeBlock -> TkPlaceBlock TkBNum TkAt position . TkSemiColon
-
-    TkSemiColon     shift and go to state 187
-
-
 state 157
 
-    (27) placeBlock -> TkPlaceBlock color TkAt position . TkSemiColon
+    (25) placeBlock -> TkPlaceBlock TkNum TkAt position . TkSemiColon
 
     TkSemiColon     shift and go to state 188
 
 
 state 158
 
-    (28) startAt -> TkStartAt position TkHeading orientation . TkSemiColon
+    (26) placeBlock -> TkPlaceBlock TkBNum TkAt position . TkSemiColon
 
     TkSemiColon     shift and go to state 189
 
 
 state 159
 
+    (27) placeBlock -> TkPlaceBlock color TkAt position . TkSemiColon
+
+    TkSemiColon     shift and go to state 190
+
+
+state 160
+
+    (28) startAt -> TkStartAt position TkHeading orientation . TkSemiColon
+
+    TkSemiColon     shift and go to state 191
+
+
+state 161
+
     (17) orientation -> TkNorth .
 
     TkSemiColon     reduce using rule 17 (orientation -> TkNorth .)
 
 
-state 160
+state 162
 
     (18) orientation -> TkEast .
 
     TkSemiColon     reduce using rule 18 (orientation -> TkEast .)
 
 
-state 161
+state 163
 
     (19) orientation -> TkWest .
 
     TkSemiColon     reduce using rule 19 (orientation -> TkWest .)
 
 
-state 162
+state 164
 
     (20) orientation -> TkSouth .
 
     TkSemiColon     reduce using rule 20 (orientation -> TkSouth .)
 
 
-state 163
-
-    (29) boolean -> TkBoolean TkId TkEqual TkTrue . TkSemiColon
-
-    TkSemiColon     shift and go to state 190
-
-
-state 164
-
-    (30) boolean -> TkBoolean TkId TkEqual TkFalse . TkSemiColon
-
-    TkSemiColon     shift and go to state 191
-
-
 state 165
 
-    (31) integer -> TkInteger TkNId TkEqual TkNum . TkSemiColon
+    (29) boolean -> TkBoolean TkId TkEqual TkTrue . TkSemiColon
 
     TkSemiColon     shift and go to state 192
 
 
 state 166
 
+    (30) boolean -> TkBoolean TkId TkEqual TkFalse . TkSemiColon
+
+    TkSemiColon     shift and go to state 193
+
+
+state 167
+
+    (31) integer -> TkInteger TkNId TkEqual TkNum . TkSemiColon
+
+    TkSemiColon     shift and go to state 194
+
+
+state 168
+
     (71) intElement -> TkOpenParent intExpression . TkCloseParent
     (63) intExpression -> intExpression . TkPlus intTerm
     (64) intExpression -> intExpression . TkMinus intTerm
 
-    TkCloseParent   shift and go to state 173
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkCloseParent   shift and go to state 175
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 167
+state 169
 
     (92) if -> TkIf boolExpression TkThen instruction .
     (93) if -> TkIf boolExpression TkThen instruction . TkElse instruction
@@ -4160,15 +4267,16 @@ state 167
     TkTake          reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .)
     TkDrop          reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .)
     TkLevel         reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .)
+    TkIdentify      reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .)
     TkTerminate     reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .)
     TkDefine        reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .)
     TkEnd           reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .)
-    TkElse          shift and go to state 193
+    TkElse          shift and go to state 195
 
   ! TkElse          [ reduce using rule 92 (if -> TkIf boolExpression TkThen instruction .) ]
 
 
-state 168
+state 170
 
     (32) boolExpression -> boolExpression TkEquiv boolTerm .
     (35) boolTerm -> boolTerm . TkAnd boolFactor
@@ -4192,16 +4300,17 @@ state 168
     TkTake          reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
     TkDrop          reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
     TkLevel         reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
+    TkIdentify      reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
     TkTerminate     reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
     TkDefine        reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
     TkEnd           reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
     TkElse          reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
     TkCloseParent   reduce using rule 32 (boolExpression -> boolExpression TkEquiv boolTerm .)
-    TkAnd           shift and go to state 131
-    TkOr            shift and go to state 132
+    TkAnd           shift and go to state 133
+    TkOr            shift and go to state 134
 
 
-state 169
+state 171
 
     (33) boolExpression -> boolExpression TkNotEqual boolTerm .
     (35) boolTerm -> boolTerm . TkAnd boolFactor
@@ -4225,16 +4334,17 @@ state 169
     TkTake          reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
     TkDrop          reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
     TkLevel         reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
+    TkIdentify      reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
     TkTerminate     reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
     TkDefine        reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
     TkEnd           reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
     TkElse          reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
     TkCloseParent   reduce using rule 33 (boolExpression -> boolExpression TkNotEqual boolTerm .)
-    TkAnd           shift and go to state 131
-    TkOr            shift and go to state 132
+    TkAnd           shift and go to state 133
+    TkOr            shift and go to state 134
 
 
-state 170
+state 172
 
     (35) boolTerm -> boolTerm TkAnd boolFactor .
 
@@ -4258,6 +4368,7 @@ state 170
     TkTake          reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
     TkDrop          reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
     TkLevel         reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
+    TkIdentify      reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
     TkTerminate     reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
     TkDefine        reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
     TkEnd           reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
@@ -4265,7 +4376,7 @@ state 170
     TkCloseParent   reduce using rule 35 (boolTerm -> boolTerm TkAnd boolFactor .)
 
 
-state 171
+state 173
 
     (36) boolTerm -> boolTerm TkOr boolFactor .
 
@@ -4289,6 +4400,7 @@ state 171
     TkTake          reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
     TkDrop          reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
     TkLevel         reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
+    TkIdentify      reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
     TkTerminate     reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
     TkDefine        reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
     TkEnd           reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
@@ -4296,7 +4408,7 @@ state 171
     TkCloseParent   reduce using rule 36 (boolTerm -> boolTerm TkOr boolFactor .)
 
 
-state 172
+state 174
 
     (47) boolElement -> TkOpenParent boolExpression TkCloseParent .
 
@@ -4320,6 +4432,7 @@ state 172
     TkTake          reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
     TkDrop          reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
     TkLevel         reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
+    TkIdentify      reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
     TkTerminate     reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
     TkDefine        reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
     TkEnd           reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
@@ -4327,7 +4440,7 @@ state 172
     TkCloseParent   reduce using rule 47 (boolElement -> TkOpenParent boolExpression TkCloseParent .)
 
 
-state 173
+state 175
 
     (71) intElement -> TkOpenParent intExpression TkCloseParent .
 
@@ -4355,6 +4468,7 @@ state 173
     TkTake          reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
     TkDrop          reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
     TkLevel         reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
+    TkIdentify      reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
     TkTerminate     reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
     TkDefine        reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
     TkEnd           reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
@@ -4366,7 +4480,7 @@ state 173
     TkDo            reduce using rule 71 (intElement -> TkOpenParent intExpression TkCloseParent .)
 
 
-state 174
+state 176
 
     (57) boolIntExpression -> intExpression TkEquiv intExpression .
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -4392,16 +4506,17 @@ state 174
     TkTake          reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
     TkDrop          reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
     TkLevel         reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
+    TkIdentify      reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
     TkTerminate     reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
     TkDefine        reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
     TkEnd           reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
     TkElse          reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
     TkCloseParent   reduce using rule 57 (boolIntExpression -> intExpression TkEquiv intExpression .)
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 175
+state 177
 
     (58) boolIntExpression -> intExpression TkNotEqual intExpression .
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -4427,16 +4542,17 @@ state 175
     TkTake          reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
     TkDrop          reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
     TkLevel         reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
+    TkIdentify      reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
     TkTerminate     reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
     TkDefine        reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
     TkEnd           reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
     TkElse          reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
     TkCloseParent   reduce using rule 58 (boolIntExpression -> intExpression TkNotEqual intExpression .)
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 176
+state 178
 
     (59) boolIntExpression -> intExpression TkLessT intExpression .
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -4462,16 +4578,17 @@ state 176
     TkTake          reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
     TkDrop          reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
     TkLevel         reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
+    TkIdentify      reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
     TkTerminate     reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
     TkDefine        reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
     TkEnd           reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
     TkElse          reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
     TkCloseParent   reduce using rule 59 (boolIntExpression -> intExpression TkLessT intExpression .)
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 177
+state 179
 
     (60) boolIntExpression -> intExpression TkLessEq intExpression .
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -4497,16 +4614,17 @@ state 177
     TkTake          reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
     TkDrop          reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
     TkLevel         reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
+    TkIdentify      reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
     TkTerminate     reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
     TkDefine        reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
     TkEnd           reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
     TkElse          reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
     TkCloseParent   reduce using rule 60 (boolIntExpression -> intExpression TkLessEq intExpression .)
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 178
+state 180
 
     (61) boolIntExpression -> intExpression TkGreatT intExpression .
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -4532,16 +4650,17 @@ state 178
     TkTake          reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
     TkDrop          reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
     TkLevel         reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
+    TkIdentify      reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
     TkTerminate     reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
     TkDefine        reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
     TkEnd           reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
     TkElse          reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
     TkCloseParent   reduce using rule 61 (boolIntExpression -> intExpression TkGreatT intExpression .)
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 179
+state 181
 
     (62) boolIntExpression -> intExpression TkGreatEq intExpression .
     (63) intExpression -> intExpression . TkPlus intTerm
@@ -4567,16 +4686,17 @@ state 179
     TkTake          reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
     TkDrop          reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
     TkLevel         reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
+    TkIdentify      reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
     TkTerminate     reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
     TkDefine        reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
     TkEnd           reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
     TkElse          reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
     TkCloseParent   reduce using rule 62 (boolIntExpression -> intExpression TkGreatEq intExpression .)
-    TkPlus          shift and go to state 146
-    TkMinus         shift and go to state 147
+    TkPlus          shift and go to state 148
+    TkMinus         shift and go to state 149
 
 
-state 180
+state 182
 
     (63) intExpression -> intExpression TkPlus intTerm .
     (66) intTerm -> intTerm . TkMult intElement
@@ -4604,6 +4724,7 @@ state 180
     TkTake          reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
     TkDrop          reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
     TkLevel         reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
+    TkIdentify      reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
     TkTerminate     reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
     TkDefine        reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
     TkEnd           reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
@@ -4613,11 +4734,11 @@ state 180
     TkOr            reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
     TkThen          reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
     TkDo            reduce using rule 63 (intExpression -> intExpression TkPlus intTerm .)
-    TkMult          shift and go to state 148
-    TkMod           shift and go to state 149
+    TkMult          shift and go to state 150
+    TkMod           shift and go to state 151
 
 
-state 181
+state 183
 
     (64) intExpression -> intExpression TkMinus intTerm .
     (66) intTerm -> intTerm . TkMult intElement
@@ -4645,6 +4766,7 @@ state 181
     TkTake          reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
     TkDrop          reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
     TkLevel         reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
+    TkIdentify      reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
     TkTerminate     reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
     TkDefine        reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
     TkEnd           reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
@@ -4654,11 +4776,11 @@ state 181
     TkOr            reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
     TkThen          reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
     TkDo            reduce using rule 64 (intExpression -> intExpression TkMinus intTerm .)
-    TkMult          shift and go to state 148
-    TkMod           shift and go to state 149
+    TkMult          shift and go to state 150
+    TkMod           shift and go to state 151
 
 
-state 182
+state 184
 
     (66) intTerm -> intTerm TkMult intElement .
 
@@ -4686,6 +4808,7 @@ state 182
     TkTake          reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
     TkDrop          reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
     TkLevel         reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
+    TkIdentify      reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
     TkTerminate     reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
     TkDefine        reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
     TkEnd           reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
@@ -4697,7 +4820,7 @@ state 182
     TkDo            reduce using rule 66 (intTerm -> intTerm TkMult intElement .)
 
 
-state 183
+state 185
 
     (67) intTerm -> intTerm TkMod intElement .
 
@@ -4725,6 +4848,7 @@ state 183
     TkTake          reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
     TkDrop          reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
     TkLevel         reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
+    TkIdentify      reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
     TkTerminate     reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
     TkDefine        reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
     TkEnd           reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
@@ -4736,7 +4860,7 @@ state 183
     TkDo            reduce using rule 67 (intTerm -> intTerm TkMod intElement .)
 
 
-state 184
+state 186
 
     (94) repeat -> TkRepeat TkNum TkTimes instruction .
 
@@ -4754,13 +4878,14 @@ state 184
     TkTake          reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
     TkDrop          reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
     TkLevel         reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
+    TkIdentify      reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
     TkTerminate     reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
     TkDefine        reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
     TkEnd           reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
     TkElse          reduce using rule 94 (repeat -> TkRepeat TkNum TkTimes instruction .)
 
 
-state 185
+state 187
 
     (95) while -> TkWhile boolExpression TkDo instruction .
 
@@ -4778,13 +4903,14 @@ state 185
     TkTake          reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
     TkDrop          reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
     TkLevel         reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
+    TkIdentify      reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
     TkTerminate     reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
     TkDefine        reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
     TkEnd           reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
     TkElse          reduce using rule 95 (while -> TkWhile boolExpression TkDo instruction .)
 
 
-state 186
+state 188
 
     (25) placeBlock -> TkPlaceBlock TkNum TkAt position TkSemiColon .
 
@@ -4796,7 +4922,7 @@ state 186
     TkInteger       reduce using rule 25 (placeBlock -> TkPlaceBlock TkNum TkAt position TkSemiColon .)
 
 
-state 187
+state 189
 
     (26) placeBlock -> TkPlaceBlock TkBNum TkAt position TkSemiColon .
 
@@ -4808,7 +4934,7 @@ state 187
     TkInteger       reduce using rule 26 (placeBlock -> TkPlaceBlock TkBNum TkAt position TkSemiColon .)
 
 
-state 188
+state 190
 
     (27) placeBlock -> TkPlaceBlock color TkAt position TkSemiColon .
 
@@ -4820,7 +4946,7 @@ state 188
     TkInteger       reduce using rule 27 (placeBlock -> TkPlaceBlock color TkAt position TkSemiColon .)
 
 
-state 189
+state 191
 
     (28) startAt -> TkStartAt position TkHeading orientation TkSemiColon .
 
@@ -4832,7 +4958,7 @@ state 189
     TkInteger       reduce using rule 28 (startAt -> TkStartAt position TkHeading orientation TkSemiColon .)
 
 
-state 190
+state 192
 
     (29) boolean -> TkBoolean TkId TkEqual TkTrue TkSemiColon .
 
@@ -4844,7 +4970,7 @@ state 190
     TkInteger       reduce using rule 29 (boolean -> TkBoolean TkId TkEqual TkTrue TkSemiColon .)
 
 
-state 191
+state 193
 
     (30) boolean -> TkBoolean TkId TkEqual TkFalse TkSemiColon .
 
@@ -4856,7 +4982,7 @@ state 191
     TkInteger       reduce using rule 30 (boolean -> TkBoolean TkId TkEqual TkFalse TkSemiColon .)
 
 
-state 192
+state 194
 
     (31) integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .
 
@@ -4868,7 +4994,7 @@ state 192
     TkInteger       reduce using rule 31 (integer -> TkInteger TkNId TkEqual TkNum TkSemiColon .)
 
 
-state 193
+state 195
 
     (93) if -> TkIf boolExpression TkThen instruction TkElse . instruction
     (82) instruction -> . assignBool
@@ -4894,10 +5020,11 @@ state 193
     (104) willyInstruction -> . TkTake TkSemiColon
     (105) willyInstruction -> . TkDrop TkSemiColon
     (106) willyInstruction -> . TkLevel TkNum TkSemiColon
-    (107) willyInstruction -> . TkTerminate TkSemiColon
-    (108) willyInstruction -> . willyInstructionId TkSemiColon
+    (107) willyInstruction -> . TkIdentify TkSemiColon
+    (108) willyInstruction -> . TkTerminate TkSemiColon
+    (109) willyInstruction -> . willyInstructionId TkSemiColon
     (99) startDefine -> . TkDefine TkId
-    (109) willyInstructionId -> . TkId
+    (110) willyInstructionId -> . TkId
 
     TkId            shift and go to state 41
     TkNId           shift and go to state 42
@@ -4911,10 +5038,11 @@ state 193
     TkTake          shift and go to state 51
     TkDrop          shift and go to state 52
     TkLevel         shift and go to state 53
-    TkTerminate     shift and go to state 54
-    TkDefine        shift and go to state 56
+    TkIdentify      shift and go to state 54
+    TkTerminate     shift and go to state 55
+    TkDefine        shift and go to state 57
 
-    instruction                    shift and go to state 194
+    instruction                    shift and go to state 196
     assignBool                     shift and go to state 33
     assignInt                      shift and go to state 34
     if                             shift and go to state 35
@@ -4924,9 +5052,9 @@ state 193
     defineInstruction              shift and go to state 39
     willyInstruction               shift and go to state 40
     startDefine                    shift and go to state 47
-    willyInstructionId             shift and go to state 55
+    willyInstructionId             shift and go to state 56
 
-state 194
+state 196
 
     (93) if -> TkIf boolExpression TkThen instruction TkElse instruction .
 
@@ -4944,6 +5072,7 @@ state 194
     TkTake          reduce using rule 93 (if -> TkIf boolExpression TkThen instruction TkElse instruction .)
     TkDrop          reduce using rule 93 (if -> TkIf boolExpression TkThen instruction TkElse instruction .)
     TkLevel         reduce using rule 93 (if -> TkIf boolExpression TkThen instruction TkElse instruction .)
+    TkIdentify      reduce using rule 93 (if -> TkIf boolExpression TkThen instruction TkElse instruction .)
     TkTerminate     reduce using rule 93 (if -> TkIf boolExpression TkThen instruction TkElse instruction .)
     TkDefine        reduce using rule 93 (if -> TkIf boolExpression TkThen instruction TkElse instruction .)
     TkEnd           reduce using rule 93 (if -> TkIf boolExpression TkThen instruction TkElse instruction .)
