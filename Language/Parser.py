@@ -1176,6 +1176,7 @@ def p_instDefine(p):
 def p_willyInstruction(p):
   # Instrucciones basicas.
   '''willyInstruction : TkMove TkSemiColon
+                      | TkFollowLine TkSemiColon
                       | TkTurnL TkSemiColon
                       | TkTurnR TkSemiColon
                       | TkTake TkSemiColon
@@ -1189,13 +1190,22 @@ def p_willyInstruction(p):
     scenario = ST.find("begin-task").scenario
     pos = getPosition(p.lexpos(1), tokensList)
 
-    if p[1] == "move":
+    if p[1] == "move" or p[1] == "follow-line":
       def move(scenario = scenario, errX = pos[0], errY = pos[1]):
         if not ST.terminate:
           willy = scenario.willy
           scenarioMap = scenario.scenarioMap
           x, y, orientation = willy.x, willy.y, willy.look
           block = False
+
+          if willy.level == 0 and willy.block != None:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tNo se puede mover a Willy con la " +\
+                "grua en el nivel 0 mientras lleva un bloque, pues lo " +\
+                "arrastraria por el suelo.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
 
           if orientation == "north" and y > 0:
             if len(scenarioMap[y-1][x]) > 0: block = True
@@ -1248,8 +1258,17 @@ def p_willyInstruction(p):
 
     elif p[1] == "turn-left":
       willy = scenario.willy
-      def turn(willy = willy):
+      def turn(willy = willy, errX = pos[0], errY = pos[1]):
         if not ST.terminate:
+          if willy.level == 0 and willy.block != None:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tNo se puede mover a Willy con la " +\
+                "grua en el nivel 0 mientras lleva un bloque, pues lo " +\
+                "arrastraria por el suelo.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
+
           orientation = willy.look
           if orientation == "north": willy.look = "west"
           elif orientation == "south": willy.look = "east"
@@ -1260,8 +1279,17 @@ def p_willyInstruction(p):
 
     elif p[1] == "turn-right":
       willy = scenario.willy
-      def turn(willy = willy):
+      def turn(willy = willy, errX = pos[0], errY = pos[1]):
         if not ST.terminate:
+          if willy.level == 0 and willy.block != None:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tNo se puede mover a Willy con la " +\
+                "grua en el nivel 0 mientras lleva un bloque, pues lo " +\
+                "arrastraria por el suelo.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
+
           orientation = willy.look
           if orientation == "north": willy.look = "east"
           elif orientation == "south": willy.look = "west"
@@ -1315,6 +1343,7 @@ def p_willyInstruction(p):
               (errX, errY)
             )
             ST.terminate = True
+          scenario.printData()
       p[0] = take
 
     elif p[1] == "drop":
@@ -1381,27 +1410,31 @@ def p_willyInstruction(p):
 
             scenario.shelves[willy.level][int(x/3)-1] += 1
             willy.block = None
+          scenario.printData()
       p[0] = drop
       
     elif p[1] == "identify":
       def identify(scenario = scenario, errX = pos[0], errY = pos[1]):
-        willy = scenario.willy
-        scenarioMap = scenario.scenarioMap
-        x, y, orientation = willy.x, willy.y, willy.look
+        if not ST.terminate:
+          willy = scenario.willy
+          scenarioMap = scenario.scenarioMap
+          x, y, orientation = willy.x, willy.y, willy.look
 
-        if not (orientation == "north" and y == 0) and\
-          not (orientation == "south" and y == len(scenarioMap)) and\
-          not (orientation == "east" and x == len(scenarioMap[0])) and\
-          not (orientation == "west" and x == 0):
+          if not (orientation == "north" and y == 0) and\
+            not (orientation == "south" and y == len(scenarioMap)) and\
+            not (orientation == "east" and x == len(scenarioMap[0])) and\
+            not (orientation == "west" and x == 0):
 
-          if orientation == "north" and len(scenarioMap[y-1][x]) > 0:
-            willy.blockId = scenarioMap[y-1][x][0]
-          elif orientation == "south" and len(scenarioMap[y+1][x]) > 0:
-            willy.blockId = scenarioMap[y+1][x][0]
-          elif orientation == "east" and len(scenarioMap[y][x+1]) > 0:
-            willy.blockId = scenarioMap[y][x+1][0]
-          elif orientation == "west" and len(scenarioMap[y][x-1]) > 0:
-            willy.blockId = scenarioMap[y][x-1][0]
+            if orientation == "north" and len(scenarioMap[y-1][x]) > 0:
+              willy.blockId = scenarioMap[y-1][x][0]
+            elif orientation == "south" and len(scenarioMap[y+1][x]) > 0:
+              willy.blockId = scenarioMap[y+1][x][0]
+            elif orientation == "east" and len(scenarioMap[y][x+1]) > 0:
+              willy.blockId = scenarioMap[y][x+1][0]
+            elif orientation == "west" and len(scenarioMap[y][x-1]) > 0:
+              willy.blockId = scenarioMap[y][x-1][0]
+
+          scenario.printData()
       p[0] = identify
 
     elif p[1] == "terminate":
@@ -1410,14 +1443,17 @@ def p_willyInstruction(p):
     elif p[1] == "level":
       willy = scenario.willy
       def level(willy = willy, level = p[2]):
-        if level < 0 or level > 2:
-          contextErrors.append(
-            ("Linea %d, columna %d:\tWilly solo tiene los niveles 0-2 " +\
-              "para la grua.") % \
-            (errX, errY)
-          )
-          ST.terminate = True
-        else: willy.level = level
+        if not ST.terminate:
+          new_level = willy.level + level
+          if new_level < 0 or new_level > 2:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tSe intento mover la grua hasta el nivel " +\
+                "%d cuando solo puede estar en los niveles 0-2.") % \
+              (errX, errY, new_level)
+            )
+            ST.terminate = True
+          else: willy.level = new_level
+          scenario.printData()
       p[0] = level
 
     else: p[0] = p[1]

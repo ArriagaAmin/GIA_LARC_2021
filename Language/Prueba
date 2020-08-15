@@ -1,70 +1,101 @@
 -- Comentario 1
-{{ Comentario 2 }}
+-- Comentario 2
 
 
 begin-scenario 
-    Start at 1 1 heading south;
-    bool FALSE = False;
-    bool TRUE = True;
-    int #zero = 1;
+    Start at 9 3 heading north;
 
-    -- BLOCKS
+    -------------- BLOCKS --------------
     -- Left 0,0
     Place block B7 at 4 7;
     Place block 13 at 4 8;
-
     -- Left 0,1
     Place block green at 7 7;
     Place block 5 at 8 7;
-
+    -- Left 1,0
     -- Left 1,1
     Place block red at 7 10;
     Place block B1 at 7 11;
 
     -- Right 0,0
     Place block blue at 13 7;
-
     -- Right 0,1
     Place block yellow at 14 10;    
     Place block 4 at 13 10;    
     Place block 10 at 14 11;    
     Place block B15 at 13 11;    
-
     -- Right 0,0
     Place block 9 at 16 7;
     Place block 13 at 16 8;
     Place block 2 at 17 8;
-
     -- Right 1,1
     Place block B14 at 17 10;
     Place block 8 at 17 11;
 
+
+    ---------------- VARIABLES ----------------
+    int #goX = 0;
+    int #goY = 0;
+    int #go = 0;
+    int #heading = 0; --norte, este, sur, oeste -> 0, 1, 2, 3
+
 end-scenario
 
 begin-task
-    #zero = (1 * (0 + 54) % 13) * 0 + 8
-    TRUE = False or #zero > 1;
-    FALSE = True;
+    -- Moverse X interseccion horizontales y Y intersecciones verticales
+    define turnL as begin
+        turn-left;
+        #heading = (#heading - 1)%4
+        end
+    define turnR as begin
+        turn-right;
+        #heading = (#heading + 1)%4
+        end
+    define moveNInters as begin
+        repeat #go times begin
+            if detect-intersection then move;
+            while not detect-intersection do move;
+            end
+        end
+    define moveXYInters as begin 
+        if #goX > 0 then begin
+            while #heading != 1 do turnL;
+            #go = #goX;
+        end else begin
+            while #heading != 3 do turnL;
+            #go = #goX * (-1);
+        end
+        moveNInters;
 
-    if TRUE and (FALSE and #zero == 3) then move;
-    else if #zero == 5 then turn-left;
-    else if #zero == 8 then level 2;
-    else terminate;
+        if #goY > 0 then begin
+            while #heading != 0 do turnL;
+            #go = #goY;
+        end else begin
+            while #heading != 2 do turnL;
+            #go = #goY * (-1);
+        end
+        moveNInters;   
+        end
 
-    turn-left; 
-    repeat 5 times move;
-    turn-left;
+    -- Moverse hasta conseguir objeto
+    define moveUntObjL as
+        while not detect-left 8 do move;
+    define moveUntObjF as
+        while not detect-front 1 do move;
+    define moveUntLine as
+        while not detect-line do move;
 
-    while not detect-right do move;
+    #goX = -2; #goY = 1;
+    moveXYInters;
     turn-right;
+    moveUntObjL;
+    #go = 1; moveNInters;
+    turn-left;
+    moveUntObjL;
+    turn-left;
+    moveUntObjF;
     identify;
-    level 0;
     take;
-    turn-right;
-    repeat 7 times move;
-    turn-right;
-    repeat 4 times move;
-    turn-left;
-    drop;
+    level 1;
+    turn-left; turn-left; moveUntLine;
 end-task
-

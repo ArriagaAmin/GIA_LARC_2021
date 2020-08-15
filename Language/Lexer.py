@@ -64,6 +64,7 @@ tokens = [
   "TkDetectLine",
   "TkDetectInters",
   "TkLastIdBlockIs",
+  "TkFollowLine",
 
   # Caracteres simples
   "TkSemiColon",
@@ -138,6 +139,9 @@ def t_TkDetectLine(t):
   return t
 def t_TkDetectInters(t):
   r'detect-intersection'
+  return t
+def t_TkFollowLine(t):
+  r'follow-line'
   return t
 
 # Definicion de los Tokens caracteres simples
