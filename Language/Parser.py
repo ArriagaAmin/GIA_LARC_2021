@@ -227,7 +227,7 @@ class Scenario:
       elif i == 15: line += "    Orientation: " + self.willy.look
       elif i == 16: line += "    Block: " + str(self.willy.block)
       elif i == 17: line += "    Last identified block: " + str(self.willy.blockId)
-      elif i == 18: line += "    Grua level: " + str(self.willy.level)
+      elif i == 18: line += "    Crane level: " + str(self.willy.level)
       
       # Agregamos la linea al texto.
       text += line + "\n"
@@ -589,13 +589,14 @@ def p_boolConstant(p):
   p[0] = const
 
 def p_detectLeft(p):
-  '''detectLeft : TkDetectL TkNum'''
+  '''detectLeft : TkDetectL intExpression'''
   scenario = ST.find("begin-task").scenario
   def detect(scenario = scenario, dist = p[2]):
     if not ST.terminate:
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
+      dist = dist()
 
       if orientation == "north":
         if x == 0: return False
@@ -623,13 +624,14 @@ def p_detectLeft(p):
   p[0] = detect
 
 def p_detectRight(p):
-  '''detectRight : TkDetectR TkNum'''
+  '''detectRight : TkDetectR intExpression'''
   scenario = ST.find("begin-task").scenario
   def detect(scenario = scenario, dist = p[2]):
     if not ST.terminate:
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
+      dist = dist()
 
       if orientation == "south":
         if x == 0: return False
@@ -657,13 +659,14 @@ def p_detectRight(p):
   p[0] = detect
 
 def p_detectFront(p):
-  '''detectFront : TkDetectF TkNum'''
+  '''detectFront : TkDetectF intExpression'''
   scenario = ST.find("begin-task").scenario
   def detect(scenario = scenario, dist = p[2]):
     if not ST.terminate:
       willy = scenario.willy
       scenarioMap = scenario.scenarioMap
       x, y, orientation = willy.x, willy.y, willy.look
+      dist = dist()
 
       if orientation == "west":
         if x == 0: return False
@@ -1181,7 +1184,7 @@ def p_willyInstruction(p):
                       | TkTurnR TkSemiColon
                       | TkTake TkSemiColon
                       | TkDrop TkSemiColon
-                      | TkLevel TkNum TkSemiColon
+                      | TkLevel intExpression TkSemiColon
                       | TkIdentify TkSemiColon
                       | TkTerminate TkSemiColon
                       | willyInstructionId TkSemiColon'''
@@ -1197,6 +1200,7 @@ def p_willyInstruction(p):
           scenarioMap = scenario.scenarioMap
           x, y, orientation = willy.x, willy.y, willy.look
           block = False
+          edge = False 
 
           if willy.level == 0 and willy.block != None:
             contextErrors.append(
@@ -1209,32 +1213,22 @@ def p_willyInstruction(p):
 
           if orientation == "north" and y > 0:
             if len(scenarioMap[y-1][x]) > 0: block = True
+            elif x == 0 or x == len(scenarioMap[0])-1: edge = True
             else: willy.y -= 1
 
           elif orientation == "south" and y < len(scenarioMap)-1:
             if len(scenarioMap[y+1][x]) > 0: block = True
+            elif x == 0 or x == len(scenarioMap[0])-1: edge = True
             else: willy.y += 1
 
           elif orientation == "east" and x < len(scenarioMap[0])-1:
             if len(scenarioMap[y][x+1]) > 0: block = True
-            elif y == 0 and 3 <= x <= 18:
-              contextErrors.append(
-                ("Linea %d, columna %d:\tNo se puede mover a Willy de " +\
-                  "orma horizontal en la zona frente a los estantes.") % \
-                (errX, errY)
-              )
-              ST.terminate = True
+            elif y == 0 or y == len(scenarioMap)-1: edge = True
             else: willy.x += 1
 
           elif orientation == "west" and x > 0:
             if len(scenarioMap[y][x-1]) > 0: block = True
-            elif y == 0 and 3 <= x <= 18:
-              contextErrors.append(
-                ("Linea %d, columna %d:\tNo se puede mover a Willy de " +\
-                  "orma horizontal en la zona frente a los estantes.") % \
-                (errX, errY)
-              )
-              ST.terminate = True
+            elif y == 0 or y == len(scenarioMap)-1: edge = True
             else: willy.x -= 1
 
           else:
@@ -1249,6 +1243,13 @@ def p_willyInstruction(p):
             contextErrors.append(
               ("Linea %d, columna %d:\tNo se puede mover a Willy hacia " +\
                 "un bloque.") % \
+              (errX, errY)
+            )
+            ST.terminate = True
+          if edge:
+            contextErrors.append(
+              ("Linea %d, columna %d:\tNo se puede mover a Willy a " +\
+                "traves del borde del escenario.") % \
               (errX, errY)
             )
             ST.terminate = True
@@ -1384,6 +1385,16 @@ def p_willyInstruction(p):
                 (errX, errY)
               )
               ST.terminate = True
+            elif not (willy.block == "green" and (int(x/3)==0 or int(x/3)==6)) and\
+              not (willy.block == "blue" and (int(x/3)==1 or int(x/3)==5)) and\
+              not (willy.block == "yellow" and (int(x/3)==2 or int(x/3)==4)) and\
+              not (willy.block == "red" and int(x/3)==3):
+              contextErrors.append(
+                ("Linea %d, columna %d:\tSe coloco un bloque en una region de " +\
+                  "descarga que no le corresponde.") % \
+                (errX, errY)
+              )
+              ST.terminate = True
             else:
               scenario.unRegions[int(x/3)] += 1
               willy.block = None
@@ -1433,6 +1444,9 @@ def p_willyInstruction(p):
               willy.blockId = scenarioMap[y][x+1][0]
             elif orientation == "west" and len(scenarioMap[y][x-1]) > 0:
               willy.blockId = scenarioMap[y][x-1][0]
+            else:
+              willy.blockId = None
+          else: willy.blockId = None
 
           scenario.printData()
       p[0] = identify
@@ -1442,9 +1456,9 @@ def p_willyInstruction(p):
     
     elif p[1] == "level":
       willy = scenario.willy
-      def level(willy = willy, level = p[2]):
+      def grua(willy = willy, level = p[2]):
         if not ST.terminate:
-          new_level = willy.level + level
+          new_level = willy.level + level()
           if new_level < 0 or new_level > 2:
             contextErrors.append(
               ("Linea %d, columna %d:\tSe intento mover la grua hasta el nivel " +\
@@ -1454,7 +1468,7 @@ def p_willyInstruction(p):
             ST.terminate = True
           else: willy.level = new_level
           scenario.printData()
-      p[0] = level
+      p[0] = grua
 
     else: p[0] = p[1]
 
